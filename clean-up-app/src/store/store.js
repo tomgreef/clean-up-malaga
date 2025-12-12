@@ -1,18 +1,7 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import VuexPersist from 'vuex-persist';
+import { createStore } from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
 
-Vue.use(Vuex);
-
-const local = new VuexPersist({
-	key: 'local-trip-malager-storage',
-	storage: window.localStorage,
-	reducer: state => ({
-		type: state.type
-	})
-});
-
-const store = new Vuex.Store({
+const store = createStore({
 	state: {
 		type: ''
 	},
@@ -24,7 +13,13 @@ const store = new Vuex.Store({
 	getters: {
 		type: state => state.type
 	},
-	plugins: [local.plugin]
+	plugins: [
+		createPersistedState({
+			key: 'local-trip-malager-storage',
+			storage: window.localStorage,
+			paths: ['type']
+		})
+	]
 });
 
 export default store;

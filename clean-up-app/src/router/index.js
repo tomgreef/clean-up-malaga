@@ -1,21 +1,18 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import { auth } from '@/firebase';
 import store from '@/store/store';
-
-Vue.use(VueRouter);
 
 const routes = [
 	{
 		path: '/',
-		component: () => import('@/views/Landing'),
+		component: () => import('@/views/Landing.vue'),
 		meta: {
 			title: 'Inicio'
 		}
 	},
 	{
 		path: '/miperfil',
-		component: () => import('@/views/Profile'),
+		component: () => import('@/views/Profile.vue'),
 		meta: {
 			title: 'Mi perfil'
 		}
@@ -23,7 +20,7 @@ const routes = [
 	// Rutas de usuario
 	{
 		path: '/mistickets',
-		component: () => import('@/views/HomeUser'),
+		component: () => import('@/views/HomeUser.vue'),
 		meta: {
 			title: 'Mis tickets',
 			userType: 'user'
@@ -31,7 +28,7 @@ const routes = [
 	},
 	{
 		path: '/crearticket',
-		component: () => import('@/views/CreateTicket'),
+		component: () => import('@/views/CreateTicket.vue'),
 		meta: {
 			title: 'Crear ticket',
 			userType: 'user'
@@ -40,25 +37,23 @@ const routes = [
 	// Rutas de agente
 	{
 		path: '/inicioagente',
-		component: () => import('@/views/HomeAgent'),
+		component: () => import('@/views/HomeAgent.vue'),
 		meta: {
 			title: 'Inicio de agente',
 			userType: 'agent'
-			// userType: 'agent'
 		}
 	},
 	{
 		path: '/GDPR',
-		component: () => import('@/views/GDPR'),
+		component: () => import('@/views/GDPR.vue'),
 		meta: {
 			title: 'GDPR'
 		}
 	}
 ];
 
-const router = new VueRouter({
-	mode: 'history',
-	base: process.env.BASE_URL,
+const router = createRouter({
+	history: createWebHistory(import.meta.env.BASE_URL),
 	routes
 });
 

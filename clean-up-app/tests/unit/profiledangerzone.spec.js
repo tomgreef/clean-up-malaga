@@ -1,5 +1,4 @@
 import ProfileDangerZone from '@/components/ProfileDangerZone.vue';
-import firebase from '@/firebase';
 import { shallowMount } from '@vue/test-utils';
 
 jest.mock('../../src/firebase.js', () => ({

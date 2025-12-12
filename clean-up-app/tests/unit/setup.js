@@ -3,7 +3,8 @@ import Buefy from 'buefy';
 
 Vue.use(Buefy);
 
-// Polyfills for Node.js environment (required for Firebase v10)
+// Polyfills for Node.js test environment
+// Required for Firebase and related dependencies that expect browser APIs
 if (typeof global.TextEncoder === 'undefined') {
 	const { TextEncoder, TextDecoder } = require('util');
 	global.TextEncoder = TextEncoder;
@@ -11,6 +12,11 @@ if (typeof global.TextEncoder === 'undefined') {
 }
 
 if (typeof global.ReadableStream === 'undefined') {
-	const { ReadableStream } = require('stream/web');
-	global.ReadableStream = ReadableStream;
+	try {
+		const { ReadableStream } = require('stream/web');
+		global.ReadableStream = ReadableStream;
+	} catch (e) {
+		// stream/web not available in older Node.js versions
+		// Tests may fail if they require ReadableStream
+	}
 }

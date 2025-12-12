@@ -65,9 +65,9 @@ describe('Modal', () => {
 		const componentText = component.text();
 		expect(componentText).toContain(ticket.title);
 		expect(componentText).toContain(ticket.description);
-		expect(componentText).toContain(ticket.cp);
+		expect(componentText).toContain(String(ticket.cp));
 		expect(componentText).toContain(ticket.street);
-		expect(componentText).toContain(ticket.streetNumber);
+		expect(componentText).toContain(String(ticket.streetNumber));
 	});
 
 	describe('Modificar ticket', () => {

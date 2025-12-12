@@ -14,7 +14,7 @@ const firebaseConfig = {
 	measurementId: 'G-EPFMYW0M7H'
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
+export const firebaseApp = initializeApp(firebaseConfig);
 
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
@@ -27,6 +27,7 @@ if (import.meta.env.MODE !== 'test') {
 }
 
 export default {
+	firebaseApp,
 	auth,
 	db,
 	storage

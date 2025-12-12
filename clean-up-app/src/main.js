@@ -3,8 +3,7 @@ import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 import Oruga from '@oruga-ui/oruga-next';
-import '@oruga-ui/oruga-next/dist/oruga.css';
-import { auth } from '@/firebase';
+import { auth, firebaseApp } from '@/firebase';
 import store from '@/store/store';
 import { VueFire, VueFireAuth } from 'vuefire';
 import './assets/scss/app.scss';
@@ -16,9 +15,11 @@ auth.onAuthStateChanged(() => {
 		app = createApp(App);
 		app.use(store);
 		app.use(router);
-		app.use(Oruga);
+		app.use(Oruga, {
+			iconPack: 'mdi'
+		});
 		app.use(VueFire, {
-			firebaseApp: auth.app,
+			firebaseApp,
 			modules: [VueFireAuth()]
 		});
 		app.mount('#app');

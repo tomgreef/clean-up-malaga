@@ -21,8 +21,8 @@
 </style>
 
 <script>
-	import Hero from '@/components/Hero';
-	import Footer from '@/components/Footer';
+	import Hero from '@/components/Hero.vue';
+	import Footer from '@/components/Footer.vue';
 
 	export default {
 		components: {

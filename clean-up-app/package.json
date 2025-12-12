@@ -11,7 +11,7 @@
 	"dependencies": {
 		"buefy": "^0.8.0",
 		"core-js": "^3.6.4",
-		"firebase": "^7.14.3",
+		"firebase": "^7.24.0",
 		"register-service-worker": "^1.7.1",
 		"vue": "^2.6.11",
 		"vue-firestore": "^0.3.30",

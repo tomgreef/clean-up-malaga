@@ -1,11 +1,11 @@
 <template>
 	<b-navbar type="is-primary" :spaced="true">
-		<template slot="brand">
+		<template #brand>
 			<b-navbar-item tag="router-link" :to="{ path: '/' }">
 				<h1 class="title">Clean Up</h1>
 			</b-navbar-item>
 		</template>
-		<template slot="start" v-if="isLoggedIn">
+		<template #start v-if="isLoggedIn">
 			<b-button
 				tag="router-link"
 				:to="isUser ? '/mistickets' : '/inicioagente'"
@@ -21,7 +21,7 @@
 				Crear incidencia
 			</b-button>
 		</template>
-		<template slot="end" v-if="isLoggedIn">
+		<template #end v-if="isLoggedIn">
 			<b-navbar-item tag="div">
 				<div class="buttons">
 					<b-button

@@ -29,7 +29,7 @@
 
 <script>
 	import { db } from '@/firebase';
-	import Comment from '@/components/Comment';
+	import Comment from '@/components/Comment.vue';
 	export default {
 		data: () => ({
 			isOpen: true

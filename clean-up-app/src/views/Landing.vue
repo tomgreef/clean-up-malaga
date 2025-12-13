@@ -18,8 +18,8 @@
 </template>
 
 <script>
-	import LoginForm from '@/components/LoginForm';
-	import SignupForm from '@/components/SignupForm';
+	import LoginForm from '@/components/LoginForm.vue';
+	import SignupForm from '@/components/SignupForm.vue';
 
 	export default {
 		data: () => ({

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import GDPR from '@/components/GDPR';
+	import GDPR from '@/components/GDPR.vue';
 
 	export default {
 		components: {

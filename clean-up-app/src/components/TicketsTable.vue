@@ -160,7 +160,7 @@
 <script>
 	import { auth, db } from '@/firebase';
 	import { success, warning } from '@/helpers/notificaciones';
-	import PopUpTicket from '@/components/PopUpTicket';
+	import PopUpTicket from '@/components/PopUpTicket.vue';
 
 	export default {
 		data: () => ({

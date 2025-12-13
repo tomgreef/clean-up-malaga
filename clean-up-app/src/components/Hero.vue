@@ -14,6 +14,9 @@
 	export default {
 		components: {
 			Navbar
+		},
+		mounted() {
+			console.log('Hero component mounted');
 		}
 	};
 </script>

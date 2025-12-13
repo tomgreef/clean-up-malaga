@@ -28,6 +28,10 @@
 		components: {
 			Hero,
 			Footer
+		},
+		mounted() {
+			console.log('App.vue mounted successfully');
+			console.log('Current route:', this.$route.path);
 		}
 	};
 </script>

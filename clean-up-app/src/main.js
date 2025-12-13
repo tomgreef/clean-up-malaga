@@ -15,30 +15,54 @@ let app;
 // Initialize app immediately, don't wait for auth
 function initApp() {
 	if (!app) {
-		app = createApp(App);
-		app.use(store);
-		app.use(router);
-		app.use(Oruga, {
-			iconPack: 'mdi'
-		});
-		app.use(BuefyCompat); // Add Buefy compatibility layer
-		app.use(VueFire, {
-			firebaseApp,
-			modules: [VueFireAuth()]
-		});
-		
-		// Handle errors globally
-		app.config.errorHandler = (err, instance, info) => {
-			console.error('Vue Error:', err);
-			console.error('Component:', instance);
-			console.error('Info:', info);
-		};
-		
-		app.mount('#app');
+		console.log('Initializing Vue app...');
+		try {
+			app = createApp(App);
+			console.log('Created app instance');
+			
+			app.use(store);
+			console.log('Added store');
+			
+			app.use(router);
+			console.log('Added router');
+			
+			app.use(Oruga, {
+				iconPack: 'mdi'
+			});
+			console.log('Added Oruga');
+			
+			app.use(BuefyCompat); // Add Buefy compatibility layer
+			console.log('Added Buefy compatibility');
+			
+			app.use(VueFire, {
+				firebaseApp,
+				modules: [VueFireAuth()]
+			});
+			console.log('Added VueFire');
+			
+			// Handle errors globally
+			app.config.errorHandler = (err, instance, info) => {
+				console.error('Vue Error:', err);
+				console.error('Component:', instance);
+				console.error('Info:', info);
+			};
+			
+			// Add warning handler
+			app.config.warnHandler = (msg, instance, trace) => {
+				console.warn('Vue Warning:', msg);
+				console.warn('Trace:', trace);
+			};
+			
+			app.mount('#app');
+			console.log('App mounted successfully!');
+		} catch (error) {
+			console.error('Error initializing app:', error);
+		}
 	}
 }
 
 // Initialize app immediately
+console.log('main.js loaded');
 initApp();
 
 // Listen for auth changes after app is mounted

@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue';
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [vue()],
+	base: './', // Use relative paths for assets
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url))
@@ -13,5 +14,14 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: 'jsdom'
+	},
+	build: {
+		outDir: 'dist',
+		assetsDir: 'assets',
+		rollupOptions: {
+			output: {
+				manualChunks: undefined
+			}
+		}
 	}
 });

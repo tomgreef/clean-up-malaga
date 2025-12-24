@@ -1,10 +1,10 @@
 import ProfileDangerZone from '@/components/ProfileDangerZone.vue';
 import { shallowMount } from '@vue/test-utils';
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: {
 		currentUser: {
-			delete: jest.fn().mockResolvedValueOnce()
+			delete: vi.fn().mockResolvedValueOnce()
 		}
 	}
 }));
@@ -13,15 +13,15 @@ describe('Función eliminar cuenta', () => {
 	let component;
 
 	const $router = {
-		replace: jest.fn()
+		replace: vi.fn()
 	};
 
 	const $buefy = {
 		dialog: {
-			confirm: jest.fn()
+			confirm: vi.fn()
 		},
 		toast: {
-			open: jest.fn()
+			open: vi.fn()
 		}
 	};
 
@@ -38,7 +38,7 @@ describe('Función eliminar cuenta', () => {
 	});
 
 	it('confirmCustomDelete funciona correctamente', async () => {
-		const confirmCustomDelete = jest.spyOn(
+		const confirmCustomDelete = vi.spyOn(
 			component.vm,
 			'confirmCustomDelete'
 		);
@@ -48,7 +48,7 @@ describe('Función eliminar cuenta', () => {
 	});
 
 	it('deleteAccount funciona correctamente', async () => {
-		const deleteAccount = jest.spyOn(component.vm, 'deleteAccount');
+		const deleteAccount = vi.spyOn(component.vm, 'deleteAccount');
 		deleteAccount();
 		await component.vm.$nextTick();
 		expect($router.replace).toHaveBeenCalledWith({ path: '/' });

@@ -5,22 +5,22 @@ import getUserType from '@/helpers/sessionHelper';
 import notificaciones from '@/helpers/notificaciones';
 import authErrors from '@/helpers/authErrors';
 
-jest.mock('../../src/helpers/authErrors.js', () =>
-	jest.fn(() => {
+vi.mock('../../src/helpers/authErrors.js', () =>
+	vi.fn(() => {
 		return 'authError';
 	})
 );
 
-jest.mock('../../src/helpers/notificaciones.js', () => ({
-	warning: jest.fn()
+vi.mock('../../src/helpers/notificaciones.js', () => ({
+	warning: vi.fn()
 }));
 
-jest.mock('../../src/helpers/sessionHelper.js', () => jest.fn());
+vi.mock('../../src/helpers/sessionHelper.js', () => vi.fn());
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: {
-		signInWithEmailAndPassword: jest.fn(),
-		signOut: jest.fn()
+		signInWithEmailAndPassword: vi.fn(),
+		signOut: vi.fn()
 	}
 }));
 
@@ -97,10 +97,10 @@ describe('Estado del botón de inicio de sesión', () => {
 describe('Función de inicio', () => {
 	let component;
 	const $router = {
-			replace: jest.fn()
+			replace: vi.fn()
 		},
 		$store = {
-			commit: jest.fn()
+			commit: vi.fn()
 		};
 
 	beforeEach(() => {
@@ -126,7 +126,7 @@ describe('Función de inicio', () => {
 				emailVerified: false
 			}
 		});
-		const inicio = jest.spyOn(component.vm, 'inicio');
+		const inicio = vi.spyOn(component.vm, 'inicio');
 		inicio();
 		await component.vm.$nextTick();
 		expect($router.replace).toHaveBeenCalledWith({ path: '/home' });
@@ -140,7 +140,7 @@ describe('Función de inicio', () => {
 				emailVerified: true
 			}
 		});
-		const inicio = jest.spyOn(component.vm, 'inicio');
+		const inicio = vi.spyOn(component.vm, 'inicio');
 		inicio();
 		await component.vm.$nextTick();
 		expect($router.replace).toHaveBeenCalledWith({ path: '/home' });
@@ -154,7 +154,7 @@ describe('Función de inicio', () => {
 				emailVerified: false
 			}
 		});
-		const inicio = jest.spyOn(component.vm, 'inicio');
+		const inicio = vi.spyOn(component.vm, 'inicio');
 		inicio();
 		await component.vm.$nextTick();
 		expect($router.replace).not.toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe('Función de inicio', () => {
 	it('Cierra la sesión y muestra un aviso si se produce un error', async () => {
 		const error = new Error();
 		firebase.auth.signInWithEmailAndPassword.mockRejectedValue(error);
-		const inicio = jest.spyOn(component.vm, 'inicio');
+		const inicio = vi.spyOn(component.vm, 'inicio');
 		inicio();
 		await component.vm.$nextTick();
 		expect(authErrors).toHaveBeenCalledWith(error);

@@ -1,12 +1,12 @@
 import { shallowMount } from '@vue/test-utils';
-import PopUpEditTicket from '@/components/PopUpEditTicket';
+import PopUpEditTicket from '@/components/PopUpEditTicket.vue';
 import firebase from '@/firebase';
 import notificaciones from '@/helpers/notificaciones';
 
-jest.mock('../../src/firebase.js', () => ({}));
+vi.mock('../../src/firebase.js', () => ({}));
 
-jest.mock('../../src/helpers/notificaciones.js', () => ({
-	success: jest.fn()
+vi.mock('../../src/helpers/notificaciones.js', () => ({
+	success: vi.fn()
 }));
 
 describe('Botón de editar ticket', () => {
@@ -50,10 +50,10 @@ describe('Botón de editar ticket', () => {
 
 describe('Función de guardar cambios', () => {
 	it('Guarda los cambios', async () => {
-		const update = jest.fn().mockResolvedValue();
-		const doc = jest.fn().mockReturnValue({ update: update });
+		const update = vi.fn().mockResolvedValue();
+		const doc = vi.fn().mockReturnValue({ update: update });
 		firebase.db = {
-			collection: jest.fn(() => {
+			collection: vi.fn(() => {
 				return {
 					doc: doc
 				};
@@ -82,7 +82,7 @@ describe('Función de guardar cambios', () => {
 				};
 			}
 		});
-		const saveChanges = jest.spyOn(component.vm, 'saveChanges');
+		const saveChanges = vi.spyOn(component.vm, 'saveChanges');
 		saveChanges();
 		await component.vm.$nextTick();
 		expect(firebase.db.collection).toHaveBeenCalledWith('tickets');

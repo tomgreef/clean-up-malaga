@@ -24,12 +24,11 @@
 
 <script>
 	import { db } from '@/firebase';
+	import { collection, query } from 'firebase/firestore';
+	import { useCollection } from 'vuefire';
+	import { computed, ref } from 'vue';
 
 	export default {
-		data: () => ({
-			current: 1,
-			perPage: 3
-		}),
 		props: {
 			isAgent: Boolean,
 			parentId: String
@@ -37,20 +36,30 @@
 		components: {
 			PopUpTicket: () => import('@/components/PopUpTicket.vue')
 		},
-		computed: {
-			paginatedTickets() {
-				return this.children.slice(
-					(this.current - 1) * this.perPage,
-					this.current * this.perPage
+		setup(props) {
+			const current = ref(1);
+			const perPage = ref(3);
+			
+			// Create a query for the children subcollection
+			const childrenQuery = computed(() => 
+				query(collection(db, 'tickets', props.parentId, 'children'))
+			);
+			
+			// Use VueFire's useCollection to bind the data
+			const children = useCollection(childrenQuery);
+			
+			const paginatedTickets = computed(() => {
+				return children.value.slice(
+					(current.value - 1) * perPage.value,
+					current.value * perPage.value
 				);
-			}
-		},
-		firestore() {
+			});
+			
 			return {
-				children: db
-					.collection('tickets')
-					.doc(this.parentId)
-					.collection('children')
+				current,
+				perPage,
+				children,
+				paginatedTickets
 			};
 		}
 	};

@@ -126,6 +126,8 @@
 
 <script>
 	import { auth, db, storage } from '@/firebase';
+	import { doc, setDoc, collection } from 'firebase/firestore';
+	import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 	import { warning } from '@/helpers/notificaciones';
 	import { success } from '@/helpers/notificaciones';
 	import { invalidTextSize } from '@/helpers/ticketHelper';
@@ -189,24 +191,27 @@
 			},
 			getUploadPromises(ticketId) {
 				let uploadPromises = [];
-				let ticketRef = storage.ref().child('tickets/' + ticketId);
 				this.images.forEach(image => {
-					uploadPromises.push(ticketRef.child(image.name).put(image));
+					const imageRef = storageRef(storage, `tickets/${ticketId}/${image.name}`);
+					uploadPromises.push(uploadBytes(imageRef, image));
 				});
 				return Promise.all(uploadPromises);
 			},
 			getDownloadPromises(tasks) {
 				let downloadPromises = [];
 				tasks.forEach(task => {
-					downloadPromises.push(task.ref.getDownloadURL());
+					downloadPromises.push(getDownloadURL(task.ref));
 				});
 				return Promise.all(downloadPromises);
 			},
 			createTicket() {
 				this.isCreating = true;
 				let uid = auth.currentUser.uid;
-				let ticketRef = db.collection('tickets').doc();
-				this.getUploadPromises(ticketRef.id)
+				const ticketsCol = collection(db, 'tickets');
+				const newTicketRef = doc(ticketsCol);
+				const ticketId = newTicketRef.id;
+				
+				this.getUploadPromises(ticketId)
 					.then(tasks => {
 						let imagesUrl = [];
 						this.getDownloadPromises(tasks)
@@ -216,23 +221,21 @@
 								});
 							})
 							.then(() => {
-								db.collection('tickets')
-									.doc(ticketRef.id)
-									.set({
-										id: ticketRef.id,
-										title: this.title,
-										description: this.description,
-										street: this.street,
-										streetNumber: this.streetNumber,
-										cp: this.cp,
-										date: Date.now(),
-										images: imagesUrl,
-										userUid: uid,
-										allowedUsers: [uid],
-										hasChildren: false,
-										agentUid: '',
-										closed: false
-									})
+								setDoc(newTicketRef, {
+									id: ticketId,
+									title: this.title,
+									description: this.description,
+									street: this.street,
+									streetNumber: this.streetNumber,
+									cp: this.cp,
+									date: Date.now(),
+									images: imagesUrl,
+									userUid: uid,
+									allowedUsers: [uid],
+									hasChildren: false,
+									agentUid: '',
+									closed: false
+								})
 									.then(() => {
 										success(
 											'Su ticket ha sido creado satisfactoriamente'

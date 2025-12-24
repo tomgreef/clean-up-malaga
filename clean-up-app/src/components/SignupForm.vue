@@ -55,33 +55,34 @@
 		},
 		methods: {
 			signup() {
-				auth.createUserWithEmailAndPassword(this.email, this.pass)
-					.then(userRef => {
-						userRef.user
-							.updateProfile({
-								displayName: this.name
-							})
-							.then(() => {
-								db.collection('users')
-									.doc(userRef.user.uid)
-									.set({
-										type: 'user'
-									});
-							})
-							.then(() => {
-								userRef.user
-									.sendEmailVerification()
+				import('firebase/auth').then(({ createUserWithEmailAndPassword, updateProfile, sendEmailVerification }) => {
+					import('firebase/firestore').then(({ doc, setDoc }) => {
+						createUserWithEmailAndPassword(auth, this.email, this.pass)
+							.then(userCredential => {
+								updateProfile(userCredential.user, {
+									displayName: this.name
+								})
 									.then(() => {
-										success(
-											'Email de verificación enviado, comprueba tu correo'
-										);
+										const userDocRef = doc(db, 'users', userCredential.user.uid);
+										return setDoc(userDocRef, {
+											type: 'user'
+										});
+									})
+									.then(() => {
+										sendEmailVerification(userCredential.user)
+											.then(() => {
+												success(
+													'Email de verificación enviado, comprueba tu correo'
+												);
+											});
+										this.reset();
 									});
-								this.reset();
+							})
+							.catch(error => {
+								warning(authErrors(error));
 							});
-					})
-					.catch(error => {
-						warning(authErrors(error));
 					});
+				});
 			},
 			reset() {
 				this.name = '';

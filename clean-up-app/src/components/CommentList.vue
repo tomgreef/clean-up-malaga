@@ -29,24 +29,35 @@
 
 <script>
 	import { db } from '@/firebase';
+	import { collection, query, orderBy } from 'firebase/firestore';
+	import { useCollection } from 'vuefire';
+	import { computed, ref } from 'vue';
 	import Comment from '@/components/Comment.vue';
+	
 	export default {
-		data: () => ({
-			isOpen: true
-		}),
 		props: {
 			ticketId: String
 		},
 		components: {
 			Comment
 		},
-		firestore() {
+		setup(props) {
+			const isOpen = ref(true);
+			
+			// Create a query for the comments subcollection
+			const commentsQuery = computed(() => 
+				query(
+					collection(db, 'tickets', props.ticketId, 'comments'),
+					orderBy('date')
+				)
+			);
+			
+			// Use VueFire's useCollection to bind the data
+			const comments = useCollection(commentsQuery);
+			
 			return {
-				comments: db
-					.collection('tickets')
-					.doc(this.ticketId)
-					.collection('comments')
-					.orderBy('date')
+				isOpen,
+				comments
 			};
 		}
 	};

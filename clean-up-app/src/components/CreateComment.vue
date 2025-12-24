@@ -16,6 +16,7 @@
 
 <script>
 	import { auth, db } from '@/firebase';
+	import { collection, addDoc } from 'firebase/firestore';
 	import { success } from '@/helpers/notificaciones';
 
 	export default {
@@ -26,20 +27,20 @@
 			ticketId: String
 		},
 		methods: {
-			addComment() {
-				let agentId = auth.currentUser.uid;
-				db.collection('tickets')
-					.doc(this.ticketId)
-					.collection('comments')
-					.add({
+			async addComment() {
+				const agentId = auth.currentUser.uid;
+				const commentsCol = collection(db, 'tickets', this.ticketId, 'comments');
+				try {
+					await addDoc(commentsCol, {
 						agent: auth.currentUser.displayName || agentId,
 						message: this.message,
 						date: Date.now()
-					})
-					.then(() => {
-						success('Comentario añadido satisfactoriamente');
-						this.message = '';
 					});
+					success('Comentario añadido satisfactoriamente');
+					this.message = '';
+				} catch (error) {
+					console.error('Error adding comment:', error);
+				}
 			}
 		}
 	};

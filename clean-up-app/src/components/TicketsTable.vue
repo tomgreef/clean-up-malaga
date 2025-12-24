@@ -159,143 +159,144 @@
 
 <script>
 	import { auth, db } from '@/firebase';
+	import { collection, doc, updateDoc, getDoc, getDocs, setDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
+	import { useCollection } from 'vuefire';
+	import { computed, ref } from 'vue';
 	import { success, warning } from '@/helpers/notificaciones';
 	import PopUpTicket from '@/components/PopUpTicket.vue';
 
 	export default {
-		data: () => ({
-			selection: [],
-			filterAgent: false,
-			filterClosed: false
-		}),
 		props: {
 			isAgent: Boolean
 		},
 		components: {
 			PopUpTicket
 		},
-		computed: {
-			currentUserUid() {
-				return auth.currentUser.uid;
-			},
-			filteredTickets() {
-				/*
-				let filter = t => this.isAgent
-					? (this.filterAgent
-							? t.agentUid == auth.currentUser.uid
-							: true) && (this.filterClosed ? t.closed : true)
-					: t.allowedUsers.includes(auth.currentUser.uid);
-					*/
-				return this.tickets.filter(this.filter);
-			}
-		},
-		methods: {
-			filter(t) {
-				if (this.isAgent) {
+		setup(props) {
+			const selection = ref([]);
+			const filterAgent = ref(false);
+			const filterClosed = ref(false);
+			
+			// Create query based on user type
+			const ticketsQuery = computed(() => {
+				const ticketsCol = collection(db, 'tickets');
+				if (!props.isAgent) {
+					return query(ticketsCol, where('allowedUsers', 'array-contains', auth.currentUser.uid));
+				} else {
+					return query(ticketsCol, orderBy('date', 'desc'));
+				}
+			});
+			
+			// Use VueFire's useCollection
+			const tickets = useCollection(ticketsQuery);
+			
+			const currentUserUid = computed(() => auth.currentUser.uid);
+			
+			const filter = (t) => {
+				if (props.isAgent) {
 					let applyAgentFilters = true;
-					if (this.filterAgent) {
+					if (filterAgent.value) {
 						applyAgentFilters = t.agentUid == auth.currentUser.uid;
 					}
-					if (this.filterClosed) {
+					if (filterClosed.value) {
 						applyAgentFilters &= t.closed;
 					}
 					return applyAgentFilters;
 				} else {
 					return t.allowedUsers.includes(auth.currentUser.uid);
 				}
-			},
-			update(action, condition) {
-				let ticketsRef = db.collection('tickets');
-				let updatePromises = [];
-				this.selection.forEach(selected => {
+			};
+			
+			const filteredTickets = computed(() => {
+				return tickets.value.filter(filter);
+			});
+			
+			const update = async (action, condition) => {
+				const ticketsCol = collection(db, 'tickets');
+				const updatePromises = [];
+				
+				for (const selected of selection.value) {
 					if (condition(selected)) {
-						let ticket = ticketsRef.doc(selected.id);
-						updatePromises.push(ticket.update(action));
+						const ticketRef = doc(ticketsCol, selected.id);
+						updatePromises.push(updateDoc(ticketRef, action));
+						
 						if (selected.hasChildren) {
-							let childrenSubCollection = ticket.collection(
-								'children'
-							);
-							childrenSubCollection.get().then(children => {
-								children.forEach(child => {
-									updatePromises.push(
-										childrenSubCollection
-											.doc(child.id)
-											.update(action)
-									);
-								});
+							const childrenCol = collection(db, 'tickets', selected.id, 'children');
+							const childrenSnapshot = await getDocs(childrenCol);
+							childrenSnapshot.forEach(child => {
+								const childDocRef = doc(childrenCol, child.id);
+								updatePromises.push(updateDoc(childDocRef, action));
 							});
 						}
 					}
-				});
-				Promise.all(updatePromises)
-					.then(success('Acción realizada con éxito'))
-					.catch(err => {
-						warning(err);
-					});
-				this.selection = [];
-			},
-			asign() {
-				this.update(
+				}
+				
+				try {
+					await Promise.all(updatePromises);
+					success('Acción realizada con éxito');
+				} catch (err) {
+					warning(err.message || 'Error al realizar la acción');
+				}
+				selection.value = [];
+			};
+			
+			const asign = () => {
+				update(
 					{ agentUid: auth.currentUser.uid },
 					t => t.agentUid == ''
 				);
-			},
-			close() {
-				this.update({ closed: true }, t => t.closed == false);
-			},
-			anidar() {
-				let parentTicket = this.selection[0];
-				let childrenTickets = this.selection.slice(
-					1,
-					this.selection.length
-				);
-				let ticketsRef = db.collection('tickets');
-				let parentTicketRef = ticketsRef.doc(parentTicket.id);
-				let ChildrenRef = parentTicketRef.collection('children');
-				let allowedUsers;
-				let updatePromises = [];
-				parentTicketRef
-					.get()
-					.then(t => {
-						allowedUsers = t.data().allowedUsers;
-					})
-					.then(() => {
-						childrenTickets.forEach(child => {
-							allowedUsers.push(child.allowedUsers[0]);
-							updatePromises.push(
-								ChildrenRef.doc(child.id).set(child)
-							);
-							ticketsRef.doc(child.id).delete();
-						});
-					})
-					.then(() => {
-						Promise.all(updatePromises)
-							.then(() => {
-								success('Incidencias anidadas con éxito');
-								parentTicketRef.update({
-									hasChildren: true,
-									allowedUsers: allowedUsers
-								});
-							})
-							.catch(() => {
-								warning('Se ha producido un error');
-							});
+			};
+			
+			const close = () => {
+				update({ closed: true }, t => t.closed == false);
+			};
+			
+			const anidar = async () => {
+				const parentTicket = selection.value[0];
+				const childrenTickets = selection.value.slice(1, selection.value.length);
+				
+				const ticketsCol = collection(db, 'tickets');
+				const parentTicketRef = doc(ticketsCol, parentTicket.id);
+				const childrenCol = collection(db, 'tickets', parentTicket.id, 'children');
+				
+				try {
+					const parentDoc = await getDoc(parentTicketRef);
+					let allowedUsers = parentDoc.data().allowedUsers;
+					const updatePromises = [];
+					
+					for (const child of childrenTickets) {
+						allowedUsers.push(child.allowedUsers[0]);
+						const childDocRef = doc(childrenCol, child.id);
+						updatePromises.push(setDoc(childDocRef, child));
+						
+						const childTicketRef = doc(ticketsCol, child.id);
+						updatePromises.push(deleteDoc(childTicketRef));
+					}
+					
+					await Promise.all(updatePromises);
+					await updateDoc(parentTicketRef, {
+						hasChildren: true,
+						allowedUsers: allowedUsers
 					});
-			}
-		},
-		firestore() {
-			let ticketsRef = db.collection('tickets');
-			if (!this.isAgent) {
-				ticketsRef = ticketsRef.where(
-					'allowedUsers',
-					'array-contains',
-					auth.currentUser.uid
-				);
-			} else {
-				ticketsRef = ticketsRef.orderBy('date', 'desc');
-			}
+					success('Incidencias anidadas con éxito');
+				} catch (err) {
+					warning('Se ha producido un error');
+					console.error(err);
+				}
+			};
+			
 			return {
-				tickets: ticketsRef
+				selection,
+				filterAgent,
+				filterClosed,
+				tickets,
+				currentUserUid,
+				filteredTickets,
+				update,
+				asign,
+				close,
+				anidar,
+				filter
 			};
 		}
 	};

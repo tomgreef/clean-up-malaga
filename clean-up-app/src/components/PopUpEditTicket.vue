@@ -68,6 +68,7 @@
 
 <script>
 	import { auth, db } from '@/firebase';
+	import { doc, updateDoc } from 'firebase/firestore';
 	import { success } from '@/helpers/notificaciones';
 	import { invalidTextSize } from '@/helpers/ticketHelper';
 
@@ -105,20 +106,21 @@
 			}
 		},
 		methods: {
-			saveChanges() {
-				db.collection('tickets')
-					.doc(this.ticket.id)
-					.update({
+			async saveChanges() {
+				const ticketRef = doc(db, 'tickets', this.ticket.id);
+				try {
+					await updateDoc(ticketRef, {
 						title: this.title,
 						description: this.description,
 						streetNumber: this.streetNumber
-					})
-					.then(() => {
-						success(
-							'Incidencia modificada con éxito. Recarga para ver los cambios'
-						);
-						this.isEditTicketModalActive = false;
 					});
+					success(
+						'Incidencia modificada con éxito. Recarga para ver los cambios'
+					);
+					this.isEditTicketModalActive = false;
+				} catch (error) {
+					console.error('Error updating ticket:', error);
+				}
 			}
 		}
 	};

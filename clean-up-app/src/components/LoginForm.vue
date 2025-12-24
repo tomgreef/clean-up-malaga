@@ -36,24 +36,26 @@
 		},
 		methods: {
 			inicio() {
-				auth.signInWithEmailAndPassword(this.email, this.pass)
-					.then(userRef => {
-						getUserType().then(type => {
-							if (type == 'agent' || userRef.user.emailVerified) {
-								this.$store.commit('change', type);
-								this.$router.replace({ path: '/home' });
-							} else {
-								warning(
-									'Verifica tu correo para iniciar sesión'
-								);
-								auth.signOut();
-							}
+				import('firebase/auth').then(({ signInWithEmailAndPassword, signOut }) => {
+					signInWithEmailAndPassword(auth, this.email, this.pass)
+						.then(userCredential => {
+							getUserType().then(type => {
+								if (type == 'agent' || userCredential.user.emailVerified) {
+									this.$store.commit('change', type);
+									this.$router.replace({ path: '/home' });
+								} else {
+									warning(
+										'Verifica tu correo para iniciar sesión'
+									);
+									signOut(auth);
+								}
+							});
+						})
+						.catch(error => {
+							warning(authErrors(error));
+							signOut(auth);
 						});
-					})
-					.catch(error => {
-						warning(authErrors(error));
-						auth.signOut();
-					});
+				});
 			}
 		}
 	};

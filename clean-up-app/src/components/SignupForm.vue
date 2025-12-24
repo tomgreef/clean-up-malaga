@@ -33,6 +33,12 @@
 
 <script>
 	import { auth, db } from '@/firebase';
+	import {
+		createUserWithEmailAndPassword,
+		updateProfile,
+		sendEmailVerification
+	} from 'firebase/auth';
+	import { doc, setDoc } from 'firebase/firestore';
 	import authErrors from '@/helpers/authErrors';
 	import { warning, success } from '@/helpers/notificaciones.js';
 
@@ -55,29 +61,27 @@
 		},
 		methods: {
 			signup() {
-				auth.createUserWithEmailAndPassword(this.email, this.pass)
+				createUserWithEmailAndPassword(auth, this.email, this.pass)
 					.then(userRef => {
-						userRef.user
-							.updateProfile({
-								displayName: this.name
-							})
-							.then(() => {
-								db.collection('users')
-									.doc(userRef.user.uid)
-									.set({
-										type: 'user'
-									});
-							})
-							.then(() => {
-								userRef.user
-									.sendEmailVerification()
-									.then(() => {
-										success(
-											'Email de verificación enviado, comprueba tu correo'
-										);
-									});
-								this.reset();
+						return updateProfile(userRef.user, {
+							displayName: this.name
+						}).then(() => {
+							return setDoc(doc(db, 'users', userRef.user.uid), {
+								type: 'user'
 							});
+						});
+					})
+					.then(() => {
+						return sendEmailVerification(auth.currentUser).then(
+							() => {
+								success(
+									'Email de verificación enviado, comprueba tu correo'
+								);
+							}
+						);
+					})
+					.then(() => {
+						this.reset();
 					})
 					.catch(error => {
 						warning(authErrors(error));

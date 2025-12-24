@@ -1,11 +1,12 @@
 import { auth, db } from '@/firebase';
+import { doc, getDoc, getDocFromCache } from 'firebase/firestore';
 
-async function cacheManager(ref) {
+async function cacheManager(docRef) {
 	let snap;
 	try {
-		snap = await ref.get({ source: 'cache' });
+		snap = await getDocFromCache(docRef);
 	} catch (err) {
-		snap = await ref.get({ source: 'server' });
+		snap = await getDoc(docRef);
 	}
 	return snap;
 }
@@ -13,9 +14,8 @@ async function cacheManager(ref) {
 export default async function getUserType() {
 	let type = null;
 	if (auth.currentUser) {
-		let snap = await cacheManager(
-			db.collection('users').doc(auth.currentUser.uid)
-		);
+		const userDocRef = doc(db, 'users', auth.currentUser.uid);
+		const snap = await cacheManager(userDocRef);
 		type = snap.data().type;
 	}
 	return type;

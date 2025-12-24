@@ -126,6 +126,12 @@
 
 <script>
 	import { auth, db, storage } from '@/firebase';
+	import { doc, collection, setDoc } from 'firebase/firestore';
+	import {
+		ref as storageRef,
+		uploadBytes,
+		getDownloadURL
+	} from 'firebase/storage';
 	import { warning } from '@/helpers/notificaciones';
 	import { success } from '@/helpers/notificaciones';
 	import { invalidTextSize } from '@/helpers/ticketHelper';
@@ -188,65 +194,57 @@
 				this.images.splice(index, 1);
 			},
 			getUploadPromises(ticketId) {
-				let uploadPromises = [];
-				let ticketRef = storage.ref().child('tickets/' + ticketId);
+				const uploadPromises = [];
 				this.images.forEach(image => {
-					uploadPromises.push(ticketRef.child(image.name).put(image));
+					const imageRef = storageRef(
+						storage,
+						`tickets/${ticketId}/${image.name}`
+					);
+					uploadPromises.push(uploadBytes(imageRef, image));
 				});
 				return Promise.all(uploadPromises);
 			},
-			getDownloadPromises(tasks) {
-				let downloadPromises = [];
-				tasks.forEach(task => {
-					downloadPromises.push(task.ref.getDownloadURL());
+			getDownloadPromises(snapshots) {
+				const downloadPromises = [];
+				snapshots.forEach(snapshot => {
+					downloadPromises.push(getDownloadURL(snapshot.ref));
 				});
 				return Promise.all(downloadPromises);
 			},
-			createTicket() {
+			async createTicket() {
 				this.isCreating = true;
-				let uid = auth.currentUser.uid;
-				let ticketRef = db.collection('tickets').doc();
-				this.getUploadPromises(ticketRef.id)
-					.then(tasks => {
-						let imagesUrl = [];
-						this.getDownloadPromises(tasks)
-							.then(urls => {
-								urls.forEach(url => {
-									imagesUrl.push(url);
-								});
-							})
-							.then(() => {
-								db.collection('tickets')
-									.doc(ticketRef.id)
-									.set({
-										id: ticketRef.id,
-										title: this.title,
-										description: this.description,
-										street: this.street,
-										streetNumber: this.streetNumber,
-										cp: this.cp,
-										date: Date.now(),
-										images: imagesUrl,
-										userUid: uid,
-										allowedUsers: [uid],
-										hasChildren: false,
-										agentUid: '',
-										closed: false
-									})
-									.then(() => {
-										success(
-											'Su ticket ha sido creado satisfactoriamente'
-										);
-										this.$router.replace({
-											path: '/mistickets'
-										});
-									});
-							});
-					})
-					.catch(err => {
-						console.error(err);
-						warning('Se ha producido un error');
+				const uid = auth.currentUser.uid;
+				const ticketsCollectionRef = collection(db, 'tickets');
+				const newTicketRef = doc(ticketsCollectionRef);
+
+				try {
+					const uploadTasks = await this.getUploadPromises(
+						newTicketRef.id
+					);
+					const urls = await this.getDownloadPromises(uploadTasks);
+
+					await setDoc(newTicketRef, {
+						id: newTicketRef.id,
+						title: this.title,
+						description: this.description,
+						street: this.street,
+						streetNumber: this.streetNumber,
+						cp: this.cp,
+						date: Date.now(),
+						images: urls,
+						userUid: uid,
+						allowedUsers: [uid],
+						hasChildren: false,
+						agentUid: '',
+						closed: false
 					});
+
+					success('Su ticket ha sido creado satisfactoriamente');
+					this.$router.replace({ path: '/mistickets' });
+				} catch (err) {
+					console.error(err);
+					warning('Se ha producido un error');
+				}
 			}
 		}
 	};

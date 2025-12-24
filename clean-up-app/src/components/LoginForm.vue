@@ -20,6 +20,7 @@
 
 <script>
 	import { auth } from '@/firebase';
+	import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 	import authErrors from '@/helpers/authErrors';
 	import { warning } from '@/helpers/notificaciones';
 	import getUserType from '@/helpers/sessionHelper';
@@ -36,7 +37,7 @@
 		},
 		methods: {
 			inicio() {
-				auth.signInWithEmailAndPassword(this.email, this.pass)
+				signInWithEmailAndPassword(auth, this.email, this.pass)
 					.then(userRef => {
 						getUserType().then(type => {
 							if (type == 'agent' || userRef.user.emailVerified) {
@@ -46,13 +47,13 @@
 								warning(
 									'Verifica tu correo para iniciar sesión'
 								);
-								auth.signOut();
+								signOut(auth);
 							}
 						});
 					})
 					.catch(error => {
 						warning(authErrors(error));
-						auth.signOut();
+						signOut(auth);
 					});
 			}
 		}

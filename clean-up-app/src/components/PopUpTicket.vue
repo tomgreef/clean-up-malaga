@@ -5,19 +5,19 @@
 				{{ ticket.title }}
 			</p>
 		</a>
-		<b-button
+		<o-button
 			v-else
 			@click="isTicketModalActive = true"
-			type="is-primary"
+			variant="primary"
 			expanded
 		>
 			{{ ticket.title }}
-		</b-button>
+		</o-button>
 
-		<b-modal :active.sync="isTicketModalActive" :width="720">
+		<o-modal v-model:active="isTicketModalActive" :width="720">
 			<div class="card">
-				<b-carousel :autoplay="false" :indicator-inside="false">
-					<b-carousel-item
+				<o-carousel :autoplay="false" :indicator-inside="false">
+					<o-carousel-item
 						v-for="(url, i) in ticket.images"
 						:key="i"
 						class="card-image"
@@ -25,8 +25,8 @@
 						<figure class="image">
 							<img :src="url" alt="No se pudo cargar la imagen" />
 						</figure>
-					</b-carousel-item>
-				</b-carousel>
+					</o-carousel-item>
+				</o-carousel>
 				<div class="card-content">
 					<div class="media">
 						<div class="media-content box">
@@ -66,7 +66,7 @@
 					</div>
 				</div>
 			</div>
-		</b-modal>
+		</o-modal>
 	</section>
 </template>
 

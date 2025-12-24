@@ -1,15 +1,15 @@
 <template>
 	<section>
-		<b-field label="Añadir un comentario" label-position="on-border">
-			<b-input
+		<o-field label="Añadir un comentario" label-position="on-border">
+			<o-input
 				v-model="message"
 				placeholder="Escriba un comentario"
 				type="textarea"
 				maxlength="200"
-			></b-input>
-		</b-field>
-		<b-button type="is-primary" expanded @click="addComment"
-			>Añadir</b-button
+			></o-input>
+		</o-field>
+		<o-button variant="primary" expanded @click="addComment"
+			>Añadir</o-button
 		>
 	</section>
 </template>

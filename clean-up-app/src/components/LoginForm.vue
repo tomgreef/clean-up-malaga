@@ -1,19 +1,19 @@
 <template>
 	<div class="box">
 		<h1 class="title is-4">Inicio de sesión</h1>
-		<b-field label="Email" label-position="on-border">
-			<b-input v-model="email"></b-input>
-		</b-field>
-		<b-field label="Contraseña" label-position="on-border">
-			<b-input v-model="pass" type="password" password-reveal></b-input>
-		</b-field>
-		<b-button
+		<o-field label="Email" label-position="on-border">
+			<o-input v-model="email"></o-input>
+		</o-field>
+		<o-field label="Contraseña" label-position="on-border">
+			<o-input v-model="pass" type="password" password-reveal></o-input>
+		</o-field>
+		<o-button
 			@click="inicio"
 			class="button"
-			type="is-primary"
+			variant="primary"
 			expanded
 			:disabled="validate"
-			>Iniciar sesión</b-button
+			>Iniciar sesión</o-button
 		>
 	</div>
 </template>

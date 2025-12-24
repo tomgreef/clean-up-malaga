@@ -1,6 +1,6 @@
 <template>
 	<section class="box">
-		<b-field
+		<o-field
 			label="Título"
 			label-position="on-border"
 			position="is-centered"
@@ -11,14 +11,14 @@
 					: ''
 			"
 		>
-			<b-input
+			<o-input
 				v-model="title"
 				placeholder="Ej: Contenedor Arroyo de la Miel"
 				maxlength="40"
-			></b-input>
-		</b-field>
+			></o-input>
+		</o-field>
 
-		<b-field
+		<o-field
 			label="Descripción"
 			label-position="on-border"
 			position="is-centered"
@@ -28,25 +28,25 @@
 					: ''
 			"
 		>
-			<b-input
+			<o-input
 				maxlength="250"
 				type="textarea"
 				placeholder="Ej: El contenedor de reciclaje en el Arroyo de la Miel está..."
 				v-model="description"
-			></b-input>
-		</b-field>
+			></o-input>
+		</o-field>
 
-		<b-field grouped group-multiline position="is-centered">
-			<b-field label="Código postal" label-position="on-border" expanded>
-				<b-numberinput
+		<o-field grouped group-multiline position="is-centered">
+			<o-field label="Código postal" label-position="on-border" expanded>
+				<o-numberinput
 					placeholder="29007"
 					v-model="cp"
 					:controls="false"
 					min="29000"
 					max="29999"
-				></b-numberinput>
-			</b-field>
-			<b-field
+				></o-numberinput>
+			</o-field>
+			<o-field
 				label="Calle"
 				label-position="on-border"
 				expanded
@@ -56,23 +56,23 @@
 						: ''
 				"
 			>
-				<b-input placeholder="Calle cómpeta" v-model="street"></b-input>
-			</b-field>
-			<b-field label="Número" label-position="on-border" expanded>
-				<b-numberinput
+				<o-input placeholder="Calle cómpeta" v-model="street"></o-input>
+			</o-field>
+			<o-field label="Número" label-position="on-border" expanded>
+				<o-numberinput
 					placeholder="Nº 42"
 					v-model="streetNumber"
 					:controls="false"
 					min="0"
 					max="999"
-				></b-numberinput>
-			</b-field>
-		</b-field>
+				></o-numberinput>
+			</o-field>
+		</o-field>
 		<br />
-		<b-field>
+		<o-field>
 			<div class="columns is-centered">
 				<div class="column is-half">
-					<b-upload
+					<o-upload
 						v-model="images"
 						:disabled="imgLimit || invalidImgLimit || invalidSize"
 						multiple
@@ -83,10 +83,10 @@
 						<section class="section">
 							<div class="content has-text-centered">
 								<p>
-									<b-icon
+									<o-icon
 										icon="upload"
-										size="is-large"
-									></b-icon>
+										size="large"
+									></o-icon>
 								</p>
 								<p>
 									Suelta tus archivos aquí o haz clic para
@@ -95,7 +95,7 @@
 								<p>{{ images.length }} / 3</p>
 							</div>
 						</section>
-					</b-upload>
+					</o-upload>
 					<div class="tags">
 						<span
 							v-for="(image, index) in images"
@@ -112,14 +112,14 @@
 					</div>
 				</div>
 			</div>
-		</b-field>
+		</o-field>
 		<br />
-		<b-button
+		<o-button
 			:disabled="invalid || invalidSize || isCreating"
-			type="is-primary"
+			variant="primary"
 			@click="createTicket"
 			expanded
-			>Crear la incidencia</b-button
+			>Crear la incidencia</o-button
 		>
 	</section>
 </template>

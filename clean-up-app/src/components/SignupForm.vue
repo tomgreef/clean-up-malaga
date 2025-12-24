@@ -1,32 +1,32 @@
 <template>
 	<div class="box">
 		<h1 class="title is-4">Crear cuenta</h1>
-		<b-field label="Nombre" label-position="on-border">
-			<b-input v-model="name"></b-input>
-		</b-field>
-		<b-field label="Email" label-position="on-border">
-			<b-input v-model="email"></b-input>
-		</b-field>
-		<b-field label="Contraseña" label-position="on-border">
-			<b-input v-model="pass" type="password" password-reveal></b-input>
-		</b-field>
+		<o-field label="Nombre" label-position="on-border">
+			<o-input v-model="name"></o-input>
+		</o-field>
+		<o-field label="Email" label-position="on-border">
+			<o-input v-model="email"></o-input>
+		</o-field>
+		<o-field label="Contraseña" label-position="on-border">
+			<o-input v-model="pass" type="password" password-reveal></o-input>
+		</o-field>
 		<div class="field">
-			<b-checkbox v-model="gdpr">
+			<o-checkbox v-model="gdpr">
 				Al seleccionar esta casilla reconoce que ha leído y acepta las
 				<router-link to="/GDPR" target="_blank"
 					>condiciones de uso y la política de protección de datos
 					personales</router-link
 				>
 				de Clean-Up
-			</b-checkbox>
+			</o-checkbox>
 		</div>
-		<b-button
+		<o-button
 			class="button"
-			type="is-primary"
+			variant="primary"
 			expanded
 			@click="signup"
 			:disabled="validate"
-			>Crear cuenta</b-button
+			>Crear cuenta</o-button
 		>
 	</div>
 </template>

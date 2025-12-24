@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<h2 class="title is-4">Zona de riesgo</h2>
-		<b-button type="is-danger" @click="confirmCustomDelete"
-			>Eliminar Perfil</b-button
+		<o-button variant="danger" @click="confirmCustomDelete"
+			>Eliminar Perfil</o-button
 		>
 	</div>
 </template>

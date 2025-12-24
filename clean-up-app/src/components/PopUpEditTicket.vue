@@ -1,21 +1,21 @@
 <template>
 	<section>
 		<hr />
-		<b-button
+		<o-button
 			expanded
-			type="is-primary"
+			variant="primary"
 			@click="isEditTicketModalActive = true"
-			size="is-small"
+			size="small"
 			:disabled="ticket.closed"
-			>Editar detalles de la incidencia</b-button
+			>Editar detalles de la incidencia</o-button
 		>
-		<b-modal
-			:active.sync="isEditTicketModalActive"
+		<o-modal
+			v-model:active="isEditTicketModalActive"
 			:width="720"
 			v-if="!ticket.closed"
 		>
 			<div class="card box">
-				<b-field
+				<o-field
 					label="Titulo"
 					label-position="on-border"
 					:message="
@@ -24,10 +24,10 @@
 							: ''
 					"
 				>
-					<b-input v-model="title"></b-input>
-				</b-field>
+					<o-input v-model="title"></o-input>
+				</o-field>
 
-				<b-field
+				<o-field
 					label="Descripción"
 					label-position="on-border"
 					:message="
@@ -36,38 +36,39 @@
 							: ''
 					"
 				>
-					<b-input
+					<o-input
 						v-model="description"
 						maxlength="250"
 						type="textarea"
-					></b-input>
-				</b-field>
+					></o-input>
+				</o-field>
 
-				<b-field label="Número" label-position="on-border">
-					<b-numberinput
+				<o-field label="Número" label-position="on-border">
+					<o-inputnumber
 						:controls="false"
 						v-model="streetNumber"
 						min="0"
 						max="999"
-					></b-numberinput>
-				</b-field>
+					></o-inputnumber>
+				</o-field>
 
 				<p class="control">
-					<b-button
-						type="is-primary"
+					<o-button
+						variant="primary"
 						expanded
 						@click="saveChanges"
 						:disabled="invalid"
-						>Guardar</b-button
+						>Guardar</o-button
 					>
 				</p>
 			</div>
-		</b-modal>
+		</o-modal>
 	</section>
 </template>
 
 <script>
 	import { auth, db } from '@/firebase';
+	import { doc, updateDoc } from 'firebase/firestore';
 	import { success } from '@/helpers/notificaciones';
 	import { invalidTextSize } from '@/helpers/ticketHelper';
 
@@ -106,19 +107,17 @@
 		},
 		methods: {
 			saveChanges() {
-				db.collection('tickets')
-					.doc(this.ticket.id)
-					.update({
-						title: this.title,
-						description: this.description,
-						streetNumber: this.streetNumber
-					})
-					.then(() => {
-						success(
-							'Incidencia modificada con éxito. Recarga para ver los cambios'
-						);
-						this.isEditTicketModalActive = false;
-					});
+				const ticketRef = doc(db, 'tickets', this.ticket.id);
+				updateDoc(ticketRef, {
+					title: this.title,
+					description: this.description,
+					streetNumber: this.streetNumber
+				}).then(() => {
+					success(
+						'Incidencia modificada con éxito. Recarga para ver los cambios'
+					);
+					this.isEditTicketModalActive = false;
+				});
 			}
 		}
 	};

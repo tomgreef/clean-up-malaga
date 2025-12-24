@@ -1,24 +1,24 @@
-import { SnackbarProgrammatic as Snackbar } from 'buefy';
+import { useOruga } from '@oruga-ui/oruga-next';
 
 export function warning(msg) {
-	Snackbar.open({
+	const oruga = useOruga();
+	oruga.notification.open({
 		duration: 2500,
 		message: msg,
-		type: 'is-warning',
-		position: 'is-top',
-		actionText: 'Ok',
-		indefinite: false
+		variant: 'warning',
+		position: 'top',
+		closable: true
 	});
 }
 
 export function success(msg) {
-	Snackbar.open({
+	const oruga = useOruga();
+	oruga.notification.open({
 		duration: 2500,
 		message: msg,
-		type: 'is-success',
-		position: 'is-top',
-		actionText: 'Ok',
-		indefinite: false
+		variant: 'success',
+		position: 'top',
+		closable: true
 	});
 }
 

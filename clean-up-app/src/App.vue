@@ -1,9 +1,11 @@
 <template>
 	<div id="app">
 		<Hero />
-		<transition name="fade" mode="out-in">
-			<router-view id="view" />
-		</transition>
+		<router-view v-slot="{ Component }">
+			<transition name="fade" mode="out-in">
+				<component :is="Component" id="view" />
+			</transition>
+		</router-view>
 		<Footer id="footer" />
 	</div>
 </template>

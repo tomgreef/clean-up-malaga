@@ -1,55 +1,29 @@
-@import 'bulma/sass/utilities/initial-variables';
-@import 'bulma/sass/utilities/functions';
-// 1. Set your own initial variables and derived
-//    variables in _variables.scss
-@import 'variables';
+// Modern Sass syntax using @use instead of deprecated @import
+// All @use rules must come first
 
-// 2. Setup your Custom Colors
+// Import Bulma with the new @use syntax
+@use 'bulma/bulma';
+
+// Custom color overrides
 $primary: #3867d6;
 $light: #f5f6fa;
 $dark: #2f3640;
-$success: #26de81;
-$link: $primary;
-$info: #2d98da;
-$danger: #eb3b5a;
-$warning: #fa8231;
 
-$primary-invert: findColorInvert($primary);
-$link-invert: findColorInvert($link);
-$dark-invert: findColorInvert($dark);
-$success-invert: findColorInvert($success);
-$link-invert: findColorInvert($link);
-$info-invert: findColorInvert($info);
-$danger-invert: findColorInvert($danger);
-$warning-invert: findColorInvert($warning);
-
-$warning: #ffa801;
-$warning-invert: findColorInvert($danger);
-
-$danger: #f53b57;
-$danger-invert: findColorInvert($danger);
-
-// Scrollbar
+// Scrollbar custom styles
 ::-webkit-scrollbar {
 	width: 10px !important;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
 	background: $dark !important;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-	background: $white !important;
+	background: white !important;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
 	background: $primary !important;
 }
 
-@import 'bulma/sass/utilities/derived-variables';
-@import 'bulma/bulma';
-
-// 4. Provide custom site styles here
+// Additional custom site styles can go here

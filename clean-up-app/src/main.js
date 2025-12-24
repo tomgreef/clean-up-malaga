@@ -1,26 +1,28 @@
-import Vue from 'vue';
+import { createApp, configureCompat } from 'vue';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
-import Buefy from 'buefy';
+import Oruga from '@oruga-ui/oruga-next';
+import { bulmaConfig } from '@oruga-ui/theme-bulma';
 import { auth } from '@/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import store from '@/store/store';
-import VueFirestore from 'vue-firestore';
 import './assets/scss/app.scss';
 
-let app = '';
+// Configure Vue 3 compat mode
+configureCompat({
+	MODE: 2
+});
 
-Vue.use(Buefy);
-Vue.use(VueFirestore);
+let app = null;
 
-Vue.config.productionTip = false;
-
-auth.onAuthStateChanged(() => {
+onAuthStateChanged(auth, () => {
 	if (!app) {
-		new Vue({
-			store,
-			router,
-			render: h => h(App)
-		}).$mount('#app');
+		app = createApp(App);
+		app.use(store);
+		app.use(router);
+		app.use(Oruga, bulmaConfig);
+		app.config.productionTip = false;
+		app.mount('#app');
 	}
 });

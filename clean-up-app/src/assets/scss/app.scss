@@ -51,6 +51,6 @@ $danger-invert: findColorInvert($danger);
 
 @import '~bulma/sass/utilities/derived-variables';
 @import '~bulma';
-@import '~buefy/src/scss/buefy';
+@import '@oruga-ui/theme-bulma/dist/scss/bulma';
 
 // 4. Provide custom buefy overrides and site styles here

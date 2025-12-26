@@ -1,8 +1,5 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import VuexPersist from 'vuex-persist';
-
-Vue.use(Vuex);
 
 const local = new VuexPersist({
 	key: 'local-trip-malager-storage',
@@ -12,7 +9,7 @@ const local = new VuexPersist({
 	})
 });
 
-const store = new Vuex.Store({
+const store = createStore({
 	state: {
 		type: ''
 	},

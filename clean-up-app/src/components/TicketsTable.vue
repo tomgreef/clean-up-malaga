@@ -1,132 +1,141 @@
 <template>
 	<div>
-		<b-field grouped group-multiline v-if="isAgent">
+		<o-field grouped group-multiline v-if="isAgent">
 			<p class="control">
-				<b-button
-					type="is-primary"
+				<o-button
+					variant="primary"
 					@click="asign"
 					:disabled="selection.length == 0"
-					>Asignar</b-button
+					>Asignar</o-button
 				>
 			</p>
 			<p class="control">
-				<b-tooltip
-					type="is-dark"
+				<o-tooltip
+					variant="dark"
 					:active="selection.length > 1"
 					always
 					square
 					multilined
 					label="La primera incidencia que selecciones será la incidencia padre"
 				>
-					<b-button
-						type="is-primary"
+					<o-button
+						variant="primary"
 						@click="anidar"
 						:disabled="selection.length <= 1"
-						>Anidar</b-button
+						>Anidar</o-button
 					>
-				</b-tooltip>
+				</o-tooltip>
 			</p>
 			<p class="control">
-				<b-button
-					type="is-danger"
+				<o-button
+					variant="danger"
 					@click="close"
 					:disabled="selection.length == 0"
-					>Cerrar</b-button
+					>Cerrar</o-button
 				>
 			</p>
 			<p class="control">
-				<b-switch
+				<o-switch
 					v-model="filterAgent"
 					:rounded="false"
-					size="is-medium"
-					type="is-primary"
+					size="medium"
+					variant="primary"
 				>
 					{{
 						filterAgent ? 'Asignadas a mi' : 'Todas las incidencias'
 					}}
-				</b-switch>
+				</o-switch>
 			</p>
 			<p class="control">
-				<b-switch
+				<o-switch
 					v-model="filterClosed"
 					:rounded="false"
-					size="is-medium"
-					type="is-primary"
+					size="medium"
+					variant="primary"
 				>
 					{{ filterClosed ? 'Mostrar abiertas' : 'Mostrar cerradas' }}
-				</b-switch>
+				</o-switch>
 			</p>
-		</b-field>
-		<b-table
+		</o-field>
+		<o-table
 			:data="filteredTickets"
 			:paginated="filteredTickets.length > 10"
 			per-page="10"
 			:checkable="isAgent"
-			:checked-rows.sync="selection"
+			v-model:checked-rows="selection"
 			hoverable
 		>
-			<template slot-scope="props">
-				<b-table-column
-					field="title"
-					label="Título"
-					sortable
-					searchable
-				>
-					<PopUpTicket :ticket="props.row" :isAgent="isAgent" />
-				</b-table-column>
+			<o-table-column
+				field="title"
+				label="Título"
+				sortable
+				searchable
+				v-slot="props"
+			>
+				<PopUpTicket :ticket="props.row" :isAgent="isAgent" />
+			</o-table-column>
 
-				<b-table-column field="cp" label="Código postal" sortable>{{
-					props.row.cp
-				}}</b-table-column>
+			<o-table-column
+				field="cp"
+				label="Código postal"
+				sortable
+				v-slot="props"
+				>{{ props.row.cp }}</o-table-column
+			>
 
-				<b-table-column
-					field="street"
-					label="Calle"
-					sortable
-					searchable
-					>{{ props.row.street }}</b-table-column
-				>
+			<o-table-column
+				field="street"
+				label="Calle"
+				sortable
+				searchable
+				v-slot="props"
+				>{{ props.row.street }}</o-table-column
+			>
 
-				<b-table-column field="closed" label="Estado" centered>{{
-					props.row.closed ? 'Cerrado' : 'Abierto'
-				}}</b-table-column>
+			<o-table-column
+				field="closed"
+				label="Estado"
+				centered
+				v-slot="props"
+				>{{ props.row.closed ? 'Cerrado' : 'Abierto' }}</o-table-column
+			>
 
-				<b-table-column field="agentUid" label="Agente asignado">
-					{{
-						props.row.agentUid != ''
-							? props.row.agentUid == currentUserUid
-								? 'Yo'
-								: isAgent
-								? props.row.agentUid
-								: 'Si'
-							: 'Sin asignar'
-					}}
-				</b-table-column>
+			<o-table-column field="agentUid" label="Agente asignado" v-slot="props">
+				{{
+					props.row.agentUid != ''
+						? props.row.agentUid == currentUserUid
+							? 'Yo'
+							: isAgent
+							? props.row.agentUid
+							: 'Si'
+						: 'Sin asignar'
+				}}
+			</o-table-column>
 
-				<b-table-column field="date" label="Fecha" sortable centered>
-					<b-tag type="is-success">{{
-						new Date(props.row.date).toLocaleDateString()
-					}}</b-tag>
-				</b-table-column>
-			</template>
-			<template slot="empty">
+			<o-table-column field="date" label="Fecha" sortable centered v-slot="props">
+				<o-tag variant="success">{{
+					new Date(props.row.date).toLocaleDateString()
+				}}</o-tag>
+			</o-table-column>
+
+			<template #empty>
 				<section class="section">
 					<div
 						v-if="isAgent"
 						class="content has-text-grey has-text-centered"
 					>
 						<p>
-							<b-icon
+							<o-icon
 								icon="package-variant"
-								size="is-large"
-							></b-icon>
+								size="large"
+							></o-icon>
 						</p>
 						<p>Nada por aquí</p>
 					</div>
-					<b-message
+					<o-message
 						v-else
 						title="Sin incidencias"
-						type="is-dark"
+						variant="dark"
 						:closable="false"
 					>
 						<div class="has-text-centered">
@@ -142,23 +151,36 @@
 							</svg>
 							<br /><br />
 
-							<b-button
+							<o-button
 								tag="router-link"
 								to="/crearticket"
-								type="is-primary"
+								variant="primary"
 							>
 								Crea tu primera incidencia
-							</b-button>
+							</o-button>
 						</div>
-					</b-message>
+					</o-message>
 				</section>
 			</template>
-		</b-table>
+		</o-table>
 	</div>
 </template>
 
 <script>
 	import { auth, db } from '@/firebase';
+	import {
+		collection,
+		doc,
+		query,
+		where,
+		orderBy,
+		getDocs,
+		updateDoc,
+		setDoc,
+		deleteDoc,
+		getDoc,
+		onSnapshot
+	} from 'firebase/firestore';
 	import { success, warning } from '@/helpers/notificaciones';
 	import PopUpTicket from '@/components/PopUpTicket';
 
@@ -166,7 +188,8 @@
 		data: () => ({
 			selection: [],
 			filterAgent: false,
-			filterClosed: false
+			filterClosed: false,
+			tickets: []
 		}),
 		props: {
 			isAgent: Boolean
@@ -179,13 +202,6 @@
 				return auth.currentUser.uid;
 			},
 			filteredTickets() {
-				/*
-				let filter = t => this.isAgent
-					? (this.filterAgent
-							? t.agentUid == auth.currentUser.uid
-							: true) && (this.filterClosed ? t.closed : true)
-					: t.allowedUsers.includes(auth.currentUser.uid);
-					*/
 				return this.tickets.filter(this.filter);
 			}
 		},
@@ -204,34 +220,34 @@
 					return t.allowedUsers.includes(auth.currentUser.uid);
 				}
 			},
-			update(action, condition) {
-				let ticketsRef = db.collection('tickets');
-				let updatePromises = [];
-				this.selection.forEach(selected => {
+			async update(action, condition) {
+				const ticketsRef = collection(db, 'tickets');
+				const updatePromises = [];
+
+				for (const selected of this.selection) {
 					if (condition(selected)) {
-						let ticket = ticketsRef.doc(selected.id);
-						updatePromises.push(ticket.update(action));
+						const ticketRef = doc(ticketsRef, selected.id);
+						updatePromises.push(updateDoc(ticketRef, action));
+
 						if (selected.hasChildren) {
-							let childrenSubCollection = ticket.collection(
-								'children'
-							);
-							childrenSubCollection.get().then(children => {
-								children.forEach(child => {
-									updatePromises.push(
-										childrenSubCollection
-											.doc(child.id)
-											.update(action)
-									);
-								});
+							const childrenRef = collection(ticketRef, 'children');
+							const childrenSnapshot = await getDocs(childrenRef);
+
+							childrenSnapshot.forEach(child => {
+								updatePromises.push(
+									updateDoc(doc(childrenRef, child.id), action)
+								);
 							});
 						}
 					}
-				});
+				}
+
 				Promise.all(updatePromises)
-					.then(success('Acción realizada con éxito'))
+					.then(() => success('Acción realizada con éxito'))
 					.catch(err => {
-						warning(err);
+						warning(err.message);
 					});
+
 				this.selection = [];
 			},
 			asign() {
@@ -243,60 +259,66 @@
 			close() {
 				this.update({ closed: true }, t => t.closed == false);
 			},
-			anidar() {
-				let parentTicket = this.selection[0];
-				let childrenTickets = this.selection.slice(
+			async anidar() {
+				const parentTicket = this.selection[0];
+				const childrenTickets = this.selection.slice(
 					1,
 					this.selection.length
 				);
-				let ticketsRef = db.collection('tickets');
-				let parentTicketRef = ticketsRef.doc(parentTicket.id);
-				let ChildrenRef = parentTicketRef.collection('children');
-				let allowedUsers;
-				let updatePromises = [];
-				parentTicketRef
-					.get()
-					.then(t => {
-						allowedUsers = t.data().allowedUsers;
-					})
-					.then(() => {
-						childrenTickets.forEach(child => {
-							allowedUsers.push(child.allowedUsers[0]);
-							updatePromises.push(
-								ChildrenRef.doc(child.id).set(child)
-							);
-							ticketsRef.doc(child.id).delete();
-						});
-					})
-					.then(() => {
-						Promise.all(updatePromises)
-							.then(() => {
-								success('Incidencias anidadas con éxito');
-								parentTicketRef.update({
-									hasChildren: true,
-									allowedUsers: allowedUsers
-								});
-							})
-							.catch(() => {
-								warning('Se ha producido un error');
-							});
+				const ticketsRef = collection(db, 'tickets');
+				const parentTicketRef = doc(ticketsRef, parentTicket.id);
+				const childrenRef = collection(parentTicketRef, 'children');
+				const updatePromises = [];
+
+				try {
+					const parentDoc = await getDoc(parentTicketRef);
+					let allowedUsers = parentDoc.data().allowedUsers;
+
+					childrenTickets.forEach(child => {
+						allowedUsers.push(child.allowedUsers[0]);
+						updatePromises.push(
+							setDoc(doc(childrenRef, child.id), child)
+						);
+						updatePromises.push(
+							deleteDoc(doc(ticketsRef, child.id))
+						);
 					});
+
+					await Promise.all(updatePromises);
+					await updateDoc(parentTicketRef, {
+						hasChildren: true,
+						allowedUsers: allowedUsers
+					});
+					success('Incidencias anidadas con éxito');
+				} catch (error) {
+					warning('Se ha producido un error');
+				}
 			}
 		},
-		firestore() {
-			let ticketsRef = db.collection('tickets');
+		mounted() {
+			const ticketsRef = collection(db, 'tickets');
+			let q;
+
 			if (!this.isAgent) {
-				ticketsRef = ticketsRef.where(
-					'allowedUsers',
-					'array-contains',
-					auth.currentUser.uid
+				q = query(
+					ticketsRef,
+					where('allowedUsers', 'array-contains', auth.currentUser.uid)
 				);
 			} else {
-				ticketsRef = ticketsRef.orderBy('date', 'desc');
+				q = query(ticketsRef, orderBy('date', 'desc'));
 			}
-			return {
-				tickets: ticketsRef
-			};
+
+			this.unsubscribe = onSnapshot(q, snapshot => {
+				this.tickets = snapshot.docs.map(doc => ({
+					id: doc.id,
+					...doc.data()
+				}));
+			});
+		},
+		unmounted() {
+			if (this.unsubscribe) {
+				this.unsubscribe();
+			}
 		}
 	};
 </script>

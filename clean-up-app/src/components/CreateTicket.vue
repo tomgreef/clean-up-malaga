@@ -1,6 +1,6 @@
 <template>
 	<section class="box">
-		<b-field
+		<o-field
 			label="Título"
 			label-position="on-border"
 			position="is-centered"
@@ -11,14 +11,14 @@
 					: ''
 			"
 		>
-			<b-input
+			<o-input
 				v-model="title"
 				placeholder="Ej: Contenedor Arroyo de la Miel"
 				maxlength="40"
-			></b-input>
-		</b-field>
+			></o-input>
+		</o-field>
 
-		<b-field
+		<o-field
 			label="Descripción"
 			label-position="on-border"
 			position="is-centered"
@@ -28,25 +28,25 @@
 					: ''
 			"
 		>
-			<b-input
+			<o-input
 				maxlength="250"
 				type="textarea"
 				placeholder="Ej: El contenedor de reciclaje en el Arroyo de la Miel está..."
 				v-model="description"
-			></b-input>
-		</b-field>
+			></o-input>
+		</o-field>
 
-		<b-field grouped group-multiline position="is-centered">
-			<b-field label="Código postal" label-position="on-border" expanded>
-				<b-numberinput
+		<o-field grouped group-multiline position="is-centered">
+			<o-field label="Código postal" label-position="on-border" expanded>
+				<o-numberinput
 					placeholder="29007"
 					v-model="cp"
 					:controls="false"
 					min="29000"
 					max="29999"
-				></b-numberinput>
-			</b-field>
-			<b-field
+				></o-numberinput>
+			</o-field>
+			<o-field
 				label="Calle"
 				label-position="on-border"
 				expanded
@@ -56,23 +56,23 @@
 						: ''
 				"
 			>
-				<b-input placeholder="Calle cómpeta" v-model="street"></b-input>
-			</b-field>
-			<b-field label="Número" label-position="on-border" expanded>
-				<b-numberinput
+				<o-input placeholder="Calle cómpeta" v-model="street"></o-input>
+			</o-field>
+			<o-field label="Número" label-position="on-border" expanded>
+				<o-numberinput
 					placeholder="Nº 42"
 					v-model="streetNumber"
 					:controls="false"
 					min="0"
 					max="999"
-				></b-numberinput>
-			</b-field>
-		</b-field>
+				></o-numberinput>
+			</o-field>
+		</o-field>
 		<br />
-		<b-field>
+		<o-field>
 			<div class="columns is-centered">
 				<div class="column is-half">
-					<b-upload
+					<o-upload
 						v-model="images"
 						:disabled="imgLimit || invalidImgLimit || invalidSize"
 						multiple
@@ -83,10 +83,10 @@
 						<section class="section">
 							<div class="content has-text-centered">
 								<p>
-									<b-icon
+									<o-icon
 										icon="upload"
-										size="is-large"
-									></b-icon>
+										size="large"
+									></o-icon>
 								</p>
 								<p>
 									Suelta tus archivos aquí o haz clic para
@@ -95,7 +95,7 @@
 								<p>{{ images.length }} / 3</p>
 							</div>
 						</section>
-					</b-upload>
+					</o-upload>
 					<div class="tags">
 						<span
 							v-for="(image, index) in images"
@@ -112,20 +112,26 @@
 					</div>
 				</div>
 			</div>
-		</b-field>
+		</o-field>
 		<br />
-		<b-button
+		<o-button
 			:disabled="invalid || invalidSize || isCreating"
-			type="is-primary"
+			variant="primary"
 			@click="createTicket"
 			expanded
-			>Crear la incidencia</b-button
+			>Crear la incidencia</o-button
 		>
 	</section>
 </template>
 
 <script>
 	import { auth, db, storage } from '@/firebase';
+	import { doc, collection, setDoc } from 'firebase/firestore';
+	import {
+		ref as storageRef,
+		uploadBytes,
+		getDownloadURL
+	} from 'firebase/storage';
 	import { warning } from '@/helpers/notificaciones';
 	import { success } from '@/helpers/notificaciones';
 	import { invalidTextSize } from '@/helpers/ticketHelper';
@@ -188,65 +194,57 @@
 				this.images.splice(index, 1);
 			},
 			getUploadPromises(ticketId) {
-				let uploadPromises = [];
-				let ticketRef = storage.ref().child('tickets/' + ticketId);
+				const uploadPromises = [];
 				this.images.forEach(image => {
-					uploadPromises.push(ticketRef.child(image.name).put(image));
+					const imageRef = storageRef(
+						storage,
+						`tickets/${ticketId}/${image.name}`
+					);
+					uploadPromises.push(uploadBytes(imageRef, image));
 				});
 				return Promise.all(uploadPromises);
 			},
-			getDownloadPromises(tasks) {
-				let downloadPromises = [];
-				tasks.forEach(task => {
-					downloadPromises.push(task.ref.getDownloadURL());
+			getDownloadPromises(snapshots) {
+				const downloadPromises = [];
+				snapshots.forEach(snapshot => {
+					downloadPromises.push(getDownloadURL(snapshot.ref));
 				});
 				return Promise.all(downloadPromises);
 			},
-			createTicket() {
+			async createTicket() {
 				this.isCreating = true;
-				let uid = auth.currentUser.uid;
-				let ticketRef = db.collection('tickets').doc();
-				this.getUploadPromises(ticketRef.id)
-					.then(tasks => {
-						let imagesUrl = [];
-						this.getDownloadPromises(tasks)
-							.then(urls => {
-								urls.forEach(url => {
-									imagesUrl.push(url);
-								});
-							})
-							.then(() => {
-								db.collection('tickets')
-									.doc(ticketRef.id)
-									.set({
-										id: ticketRef.id,
-										title: this.title,
-										description: this.description,
-										street: this.street,
-										streetNumber: this.streetNumber,
-										cp: this.cp,
-										date: Date.now(),
-										images: imagesUrl,
-										userUid: uid,
-										allowedUsers: [uid],
-										hasChildren: false,
-										agentUid: '',
-										closed: false
-									})
-									.then(() => {
-										success(
-											'Su ticket ha sido creado satisfactoriamente'
-										);
-										this.$router.replace({
-											path: '/mistickets'
-										});
-									});
-							});
-					})
-					.catch(err => {
-						console.error(err);
-						warning('Se ha producido un error');
+				const uid = auth.currentUser.uid;
+				const ticketsCollectionRef = collection(db, 'tickets');
+				const newTicketRef = doc(ticketsCollectionRef);
+
+				try {
+					const uploadTasks = await this.getUploadPromises(
+						newTicketRef.id
+					);
+					const urls = await this.getDownloadPromises(uploadTasks);
+
+					await setDoc(newTicketRef, {
+						id: newTicketRef.id,
+						title: this.title,
+						description: this.description,
+						street: this.street,
+						streetNumber: this.streetNumber,
+						cp: this.cp,
+						date: Date.now(),
+						images: urls,
+						userUid: uid,
+						allowedUsers: [uid],
+						hasChildren: false,
+						agentUid: '',
+						closed: false
 					});
+
+					success('Su ticket ha sido creado satisfactoriamente');
+					this.$router.replace({ path: '/mistickets' });
+				} catch (err) {
+					console.error(err);
+					warning('Se ha producido un error');
+				}
 			}
 		}
 	};

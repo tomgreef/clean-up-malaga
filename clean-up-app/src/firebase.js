@@ -1,9 +1,9 @@
-import firebase from 'firebase/app';
-import '@firebase/auth';
-import '@firebase/firestore';
-import '@firebase/storage';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
-const firebaseApp = firebase.initializeApp({
+const firebaseApp = initializeApp({
 	apiKey: 'AIzaSyCEZ-xMjsoJlJyyeMdL3rNiHA-454Nxres',
 	authDomain: 'clean-up-e3ad6.firebaseapp.com',
 	databaseURL: 'https://clean-up-e3ad6.firebaseio.com',
@@ -14,18 +14,17 @@ const firebaseApp = firebase.initializeApp({
 	measurementId: 'G-EPFMYW0M7H'
 });
 
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+const storage = getStorage(firebaseApp);
+
 if (process.env.NODE_ENV != 'test') {
-	firebaseApp
-		.firestore()
-		.enablePersistence()
-		.catch(err => {
-			console.log('Error when enabling persistence:', err);
-		});
+	enableIndexedDbPersistence(db).catch(err => {
+		console.log('Error when enabling persistence:', err);
+	});
 }
 
-export const auth = firebaseApp.auth();
-export const db = firebaseApp.firestore();
-export const storage = firebaseApp.storage();
+export { auth, db, storage };
 
 export default {
 	auth,

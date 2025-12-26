@@ -1,18 +1,20 @@
 <template>
 	<div>
-		<b-collapse
+		<o-collapse
 			animation="slide"
-			:open.sync="isOpen"
+			v-model:open="isOpen"
 			v-if="this.comments ? this.comments.length > 0 : false"
 		>
-			<p class="panel-heading has-text-left" slot="trigger">
-				<strong> Listado de comentarios </strong>
-				<b-icon
-					:icon="isOpen ? 'chevron-down' : 'chevron-up'"
-					size="is-small"
-				>
-				</b-icon>
-			</p>
+			<template #trigger>
+				<p class="panel-heading has-text-left">
+					<strong> Listado de comentarios </strong>
+					<o-icon
+						:icon="isOpen ? 'chevron-down' : 'chevron-up'"
+						size="small"
+					>
+					</o-icon>
+				</p>
+			</template>
 			<p
 				v-for="comment in comments"
 				:key="comment.id"
@@ -20,7 +22,7 @@
 			>
 				<Comment :comment="comment" />
 			</p>
-		</b-collapse>
+		</o-collapse>
 		<p v-else class="box has-text-left">
 			<strong>Aún no hay comentarios en esta incidencia</strong>
 		</p>
@@ -29,10 +31,19 @@
 
 <script>
 	import { db } from '@/firebase';
+	import {
+		collection,
+		doc,
+		query,
+		orderBy,
+		onSnapshot
+	} from 'firebase/firestore';
 	import Comment from '@/components/Comment';
+
 	export default {
 		data: () => ({
-			isOpen: true
+			isOpen: true,
+			comments: []
 		}),
 		props: {
 			ticketId: String
@@ -40,14 +51,24 @@
 		components: {
 			Comment
 		},
-		firestore() {
-			return {
-				comments: db
-					.collection('tickets')
-					.doc(this.ticketId)
-					.collection('comments')
-					.orderBy('date')
-			};
+		mounted() {
+			if (this.ticketId) {
+				const commentsQuery = query(
+					collection(doc(db, 'tickets', this.ticketId), 'comments'),
+					orderBy('date')
+				);
+				this.unsubscribe = onSnapshot(commentsQuery, snapshot => {
+					this.comments = snapshot.docs.map(doc => ({
+						id: doc.id,
+						...doc.data()
+					}));
+				});
+			}
+		},
+		unmounted() {
+			if (this.unsubscribe) {
+				this.unsubscribe();
+			}
 		}
 	};
 </script>

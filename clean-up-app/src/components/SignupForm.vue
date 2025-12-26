@@ -1,38 +1,44 @@
 <template>
 	<div class="box">
 		<h1 class="title is-4">Crear cuenta</h1>
-		<b-field label="Nombre" label-position="on-border">
-			<b-input v-model="name"></b-input>
-		</b-field>
-		<b-field label="Email" label-position="on-border">
-			<b-input v-model="email"></b-input>
-		</b-field>
-		<b-field label="Contraseña" label-position="on-border">
-			<b-input v-model="pass" type="password" password-reveal></b-input>
-		</b-field>
+		<o-field label="Nombre" label-position="on-border">
+			<o-input v-model="name"></o-input>
+		</o-field>
+		<o-field label="Email" label-position="on-border">
+			<o-input v-model="email"></o-input>
+		</o-field>
+		<o-field label="Contraseña" label-position="on-border">
+			<o-input v-model="pass" type="password" password-reveal></o-input>
+		</o-field>
 		<div class="field">
-			<b-checkbox v-model="gdpr">
+			<o-checkbox v-model="gdpr">
 				Al seleccionar esta casilla reconoce que ha leído y acepta las
 				<router-link to="/GDPR" target="_blank"
 					>condiciones de uso y la política de protección de datos
 					personales</router-link
 				>
 				de Clean-Up
-			</b-checkbox>
+			</o-checkbox>
 		</div>
-		<b-button
+		<o-button
 			class="button"
-			type="is-primary"
+			variant="primary"
 			expanded
 			@click="signup"
 			:disabled="validate"
-			>Crear cuenta</b-button
+			>Crear cuenta</o-button
 		>
 	</div>
 </template>
 
 <script>
 	import { auth, db } from '@/firebase';
+	import {
+		createUserWithEmailAndPassword,
+		updateProfile,
+		sendEmailVerification
+	} from 'firebase/auth';
+	import { doc, setDoc } from 'firebase/firestore';
 	import authErrors from '@/helpers/authErrors';
 	import { warning, success } from '@/helpers/notificaciones.js';
 
@@ -55,29 +61,27 @@
 		},
 		methods: {
 			signup() {
-				auth.createUserWithEmailAndPassword(this.email, this.pass)
+				createUserWithEmailAndPassword(auth, this.email, this.pass)
 					.then(userRef => {
-						userRef.user
-							.updateProfile({
-								displayName: this.name
-							})
-							.then(() => {
-								db.collection('users')
-									.doc(userRef.user.uid)
-									.set({
-										type: 'user'
-									});
-							})
-							.then(() => {
-								userRef.user
-									.sendEmailVerification()
-									.then(() => {
-										success(
-											'Email de verificación enviado, comprueba tu correo'
-										);
-									});
-								this.reset();
+						return updateProfile(userRef.user, {
+							displayName: this.name
+						}).then(() => {
+							return setDoc(doc(db, 'users', userRef.user.uid), {
+								type: 'user'
 							});
+						});
+					})
+					.then(() => {
+						return sendEmailVerification(auth.currentUser).then(
+							() => {
+								success(
+									'Email de verificación enviado, comprueba tu correo'
+								);
+							}
+						);
+					})
+					.then(() => {
+						this.reset();
 					})
 					.catch(error => {
 						warning(authErrors(error));

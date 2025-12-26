@@ -3,11 +3,11 @@
 		<div class="content has-text-centered">
 			<p>
 				<a v-for="item in items" :key="item.name" :href="item.link">
-					<b-icon
+					<o-icon
 						:icon="item.icon"
-						size="is-medium"
-						type="is-light"
-					></b-icon>
+						size="medium"
+						variant="light"
+					></o-icon>
 				</a>
 			</p>
 			<p class="has-text-light has-text-weight-bold">

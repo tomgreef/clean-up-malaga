@@ -1,47 +1,48 @@
 <template>
-	<b-navbar type="is-primary" :spaced="true">
-		<template slot="brand">
-			<b-navbar-item tag="router-link" :to="{ path: '/' }">
+	<o-navbar>
+		<template #brand>
+			<o-navbar-item tag="router-link" :to="{ path: '/' }">
 				<h1 class="title">Clean Up</h1>
-			</b-navbar-item>
+			</o-navbar-item>
 		</template>
-		<template slot="start" v-if="isLoggedIn">
-			<b-button
+		<template #start v-if="isLoggedIn">
+			<o-button
 				tag="router-link"
 				:to="isUser ? '/mistickets' : '/inicioagente'"
-				type="is-primary"
+				variant="primary"
 				>Inicio
-			</b-button>
-			<b-button
+			</o-button>
+			<o-button
 				v-if="isUser"
 				tag="router-link"
 				to="/crearticket"
-				type="is-primary"
+				variant="primary"
 			>
 				Crear incidencia
-			</b-button>
+			</o-button>
 		</template>
-		<template slot="end" v-if="isLoggedIn">
-			<b-navbar-item tag="div">
+		<template #end v-if="isLoggedIn">
+			<o-navbar-item tag="div">
 				<div class="buttons">
-					<b-button
+					<o-button
 						tag="router-link"
 						to="/miperfil"
 						inverted
-						type="is-link"
-						>Mi perfil</b-button
+						variant="link"
+						>Mi perfil</o-button
 					>
-					<b-button type="is-danger" @click="logout"
-						>Cerrar sesión</b-button
+					<o-button variant="danger" @click="logout"
+						>Cerrar sesión</o-button
 					>
 				</div>
-			</b-navbar-item>
+			</o-navbar-item>
 		</template>
-	</b-navbar>
+	</o-navbar>
 </template>
 
 <script>
 	import { auth } from '@/firebase';
+	import { signOut } from 'firebase/auth';
 
 	export default {
 		computed: {
@@ -57,7 +58,7 @@
 		},
 		methods: {
 			logout() {
-				auth.signOut().then(() => {
+				signOut(auth).then(() => {
 					this.$router.push({ path: '/' });
 				});
 			}

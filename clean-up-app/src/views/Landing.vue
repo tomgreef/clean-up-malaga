@@ -3,14 +3,14 @@
 		<div class="container">
 			<div class="columns is-centered">
 				<div class="column is-half">
-					<b-tabs position="is-centered" type="is-toggle" expanded>
-						<b-tab-item label="Inicio de sesión">
+					<o-tabs position="is-centered" variant="toggle" expanded>
+						<o-tab-item label="Inicio de sesión">
 							<LoginForm />
-						</b-tab-item>
-						<b-tab-item label="Crear cuenta de usuario">
+						</o-tab-item>
+						<o-tab-item label="Crear cuenta de usuario">
 							<SignupForm />
-						</b-tab-item>
-					</b-tabs>
+						</o-tab-item>
+					</o-tabs>
 				</div>
 			</div>
 		</div>

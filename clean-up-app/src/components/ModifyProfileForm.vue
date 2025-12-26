@@ -1,11 +1,11 @@
 <template>
 	<div>
 		<h2 class="title is-4">Cambia tu nombre de usuario</h2>
-		<b-field label="Name">
-			<b-input v-model="name" palceholder="Nombre de usuario"></b-input>
-		</b-field>
-		<b-button type="is-primary" @click="saveName" :disabled="invalidName"
-			>Cambiar nombre</b-button
+		<o-field label="Name">
+			<o-input v-model="name" palceholder="Nombre de usuario"></o-input>
+		</o-field>
+		<o-button variant="primary" @click="saveName" :disabled="invalidName"
+			>Cambiar nombre</o-button
 		>
 	</div>
 </template>

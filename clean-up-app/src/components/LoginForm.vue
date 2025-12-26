@@ -1,25 +1,26 @@
 <template>
 	<div class="box">
 		<h1 class="title is-4">Inicio de sesión</h1>
-		<b-field label="Email" label-position="on-border">
-			<b-input v-model="email"></b-input>
-		</b-field>
-		<b-field label="Contraseña" label-position="on-border">
-			<b-input v-model="pass" type="password" password-reveal></b-input>
-		</b-field>
-		<b-button
+		<o-field label="Email" label-position="on-border">
+			<o-input v-model="email"></o-input>
+		</o-field>
+		<o-field label="Contraseña" label-position="on-border">
+			<o-input v-model="pass" type="password" password-reveal></o-input>
+		</o-field>
+		<o-button
 			@click="inicio"
 			class="button"
-			type="is-primary"
+			variant="primary"
 			expanded
 			:disabled="validate"
-			>Iniciar sesión</b-button
+			>Iniciar sesión</o-button
 		>
 	</div>
 </template>
 
 <script>
 	import { auth } from '@/firebase';
+	import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 	import authErrors from '@/helpers/authErrors';
 	import { warning } from '@/helpers/notificaciones';
 	import getUserType from '@/helpers/sessionHelper';
@@ -36,7 +37,7 @@
 		},
 		methods: {
 			inicio() {
-				auth.signInWithEmailAndPassword(this.email, this.pass)
+				signInWithEmailAndPassword(auth, this.email, this.pass)
 					.then(userRef => {
 						getUserType().then(type => {
 							if (type == 'agent' || userRef.user.emailVerified) {
@@ -46,13 +47,13 @@
 								warning(
 									'Verifica tu correo para iniciar sesión'
 								);
-								auth.signOut();
+								signOut(auth);
 							}
 						});
 					})
 					.catch(error => {
 						warning(authErrors(error));
-						auth.signOut();
+						signOut(auth);
 					});
 			}
 		}

@@ -11,15 +11,20 @@ const local = new VuexPersist({
 
 const store = createStore({
 	state: {
-		type: ''
+		type: '',
+		isLoggedIn: false
 	},
 	mutations: {
 		change(state, type) {
 			state.type = type;
+		},
+		setAuthState(state, isLoggedIn) {
+			state.isLoggedIn = isLoggedIn;
 		}
 	},
 	getters: {
-		type: state => state.type
+		type: state => state.type,
+		isLoggedIn: state => state.isLoggedIn
 	},
 	plugins: [local.plugin]
 });

@@ -53,7 +53,7 @@
 				return this.$route.path == '/';
 			},
 			isLoggedIn() {
-				return auth.currentUser != null;
+				return this.$store.getters.isLoggedIn;
 			}
 		},
 		methods: {

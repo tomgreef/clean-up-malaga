@@ -1,4 +1,4 @@
-import Vue from 'vue';
-import Buefy from 'buefy';
+import { config } from '@vue/test-utils';
+import Oruga from '@oruga-ui/oruga-next';
 
-Vue.use(Buefy);
+config.global.plugins = [[Oruga, {}]];

@@ -12,7 +12,7 @@ import './assets/scss/app.scss';
 
 let app = null;
 
-onAuthStateChanged(auth, () => {
+onAuthStateChanged(auth, (user) => {
 	if (!app) {
 		app = createApp(App);
 		app.use(store);
@@ -21,4 +21,5 @@ onAuthStateChanged(auth, () => {
 		app.config.productionTip = false;
 		app.mount('#app');
 	}
+	store.commit('setAuthState', user !== null);
 });

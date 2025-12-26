@@ -5,14 +5,14 @@ import store from '@/store/store';
 const routes = [
 	{
 		path: '/',
-		component: () => import('@/views/Landing'),
+		component: () => import('@/views/Landing.vue'),
 		meta: {
 			title: 'Inicio'
 		}
 	},
 	{
 		path: '/miperfil',
-		component: () => import('@/views/Profile'),
+		component: () => import('@/views/Profile.vue'),
 		meta: {
 			title: 'Mi perfil'
 		}
@@ -20,7 +20,7 @@ const routes = [
 	// Rutas de usuario
 	{
 		path: '/mistickets',
-		component: () => import('@/views/HomeUser'),
+		component: () => import('@/views/HomeUser.vue'),
 		meta: {
 			title: 'Mis tickets',
 			userType: 'user'
@@ -28,7 +28,7 @@ const routes = [
 	},
 	{
 		path: '/crearticket',
-		component: () => import('@/views/CreateTicket'),
+		component: () => import('@/views/CreateTicket.vue'),
 		meta: {
 			title: 'Crear ticket',
 			userType: 'user'
@@ -37,7 +37,7 @@ const routes = [
 	// Rutas de agente
 	{
 		path: '/inicioagente',
-		component: () => import('@/views/HomeAgent'),
+		component: () => import('@/views/HomeAgent.vue'),
 		meta: {
 			title: 'Inicio de agente',
 			userType: 'agent'
@@ -46,7 +46,7 @@ const routes = [
 	},
 	{
 		path: '/GDPR',
-		component: () => import('@/views/GDPR'),
+		component: () => import('@/views/GDPR.vue'),
 		meta: {
 			title: 'GDPR'
 		}

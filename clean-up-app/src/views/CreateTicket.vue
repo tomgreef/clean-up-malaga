@@ -10,7 +10,7 @@
 </template>
 
 <script>
-	import CreateTicket from '@/components/CreateTicket';
+	import CreateTicket from '@/components/CreateTicket.vue';
 
 	export default {
 		components: {

@@ -11,8 +11,8 @@
 
 <script>
 	import { auth } from '@/firebase';
-	import ModifyProfileForm from '@/components/ModifyProfileForm';
-	import ProfileDangerZone from '@/components/ProfileDangerZone';
+	import ModifyProfileForm from '@/components/ModifyProfileForm.vue';
+	import ProfileDangerZone from '@/components/ProfileDangerZone.vue';
 
 	export default {
 		components: {

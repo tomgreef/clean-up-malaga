@@ -38,7 +38,7 @@
 		orderBy,
 		onSnapshot
 	} from 'firebase/firestore';
-	import Comment from '@/components/Comment';
+	import Comment from '@/components/Comment.vue';
 
 	export default {
 		data: () => ({

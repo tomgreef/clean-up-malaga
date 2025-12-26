@@ -182,7 +182,7 @@
 		onSnapshot
 	} from 'firebase/firestore';
 	import { success, warning } from '@/helpers/notificaciones';
-	import PopUpTicket from '@/components/PopUpTicket';
+	import PopUpTicket from '@/components/PopUpTicket.vue';
 
 	export default {
 		data: () => ({

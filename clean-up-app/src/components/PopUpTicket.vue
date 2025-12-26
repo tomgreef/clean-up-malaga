@@ -72,10 +72,10 @@
 
 <script>
 	import { auth } from '@/firebase';
-	import CommentList from '@/components/CommentList';
-	import CreateComment from '@/components/CreateComment';
-	import SubTicketPagination from '@/components/SubTicketPagination';
-	import PopUpEditTicket from '@/components/PopUpEditTicket';
+	import CommentList from '@/components/CommentList.vue';
+	import CreateComment from '@/components/CreateComment.vue';
+	import SubTicketPagination from '@/components/SubTicketPagination.vue';
+	import PopUpEditTicket from '@/components/PopUpEditTicket.vue';
 
 	export default {
 		name: 'PopUpTicket',

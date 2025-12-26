@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
-import PopUpTicket from '@/components/PopUpTicket';
+import PopUpTicket from '@/components/PopUpTicket.vue';
 
 describe('Controles de lanzamiento', () => {
 	it('Debe ser un anchor si no es un ticket hijo', () => {

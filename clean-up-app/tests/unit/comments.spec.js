@@ -1,16 +1,17 @@
 import { shallowMount } from '@vue/test-utils';
-import Comment from '@/components/Comment';
-import CommentList from '@/components/CommentList';
-import CreateComment from '@/components/CreateComment';
+import Comment from '@/components/Comment.vue';
+import CommentList from '@/components/CommentList.vue';
+import CreateComment from '@/components/CreateComment.vue';
 import firebase from '@/firebase';
 import notificaciones from '@/helpers/notificaciones';
+import { vi } from 'vitest';
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: { currentUser: { displayName: 'Agente 007', uid: 'uid' } }
 }));
 
-jest.mock('../../src/helpers/notificaciones.js', () => ({
-	success: jest.fn()
+vi.mock('../../src/helpers/notificaciones.js', () => ({
+	success: vi.fn()
 }));
 
 describe('Componente Comment', () => {
@@ -56,11 +57,11 @@ describe('Componente CommentList', () => {
 
 describe('Componente CreateComment', () => {
 	it('El comentario se guarda', async () => {
-		const add = jest.fn().mockResolvedValue();
-		const subcollection = jest.fn().mockReturnValue({ add: add });
-		const doc = jest.fn().mockReturnValue({ collection: subcollection });
+		const add = vi.fn().mockResolvedValue();
+		const subcollection = vi.fn().mockReturnValue({ add: add });
+		const doc = vi.fn().mockReturnValue({ collection: subcollection });
 		firebase.db = {
-			collection: jest.fn(() => {
+			collection: vi.fn(() => {
 				return {
 					doc: doc
 				};

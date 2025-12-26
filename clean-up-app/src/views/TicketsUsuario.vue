@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import ListadoTickets from '@/components/ListadoTickets';
+	import ListadoTickets from '@/components/ListadoTickets.vue';
 	export default {
 		components: {
 			ListadoTickets

@@ -37,7 +37,7 @@
 			parentId: String
 		},
 		components: {
-			PopUpTicket: () => import('@/components/PopUpTicket')
+			PopUpTicket: () => import('@/components/PopUpTicket.vue')
 		},
 		computed: {
 			paginatedTickets() {

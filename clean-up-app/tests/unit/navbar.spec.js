@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/Navbar.vue';
 
 describe('Botón Inicio', () => {
 	it('No se muestra si no se ha iniciado sesión', () => {

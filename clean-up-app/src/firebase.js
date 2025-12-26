@@ -18,7 +18,7 @@ const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 const storage = getStorage(firebaseApp);
 
-if (process.env.NODE_ENV != 'test') {
+if (import.meta.env.MODE != 'test') {
 	enableIndexedDbPersistence(db).catch(err => {
 		console.log('Error when enabling persistence:', err);
 	});

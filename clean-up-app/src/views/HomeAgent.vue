@@ -7,7 +7,7 @@
 </template>
 
 <script>
-	import TicketsTable from '@/components/TicketsTable';
+	import TicketsTable from '@/components/TicketsTable.vue';
 
 	export default {
 		data: () => ({}),

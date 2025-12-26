@@ -1,29 +1,30 @@
+import { vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import CreateTicket from '@/components/CreateTicket.vue';
 import notificaciones from '@/helpers/notificaciones';
 import firebase from '@/firebase';
 
-jest.mock('../../src/helpers/notificaciones.js', () => ({
-	warning: jest.fn(),
-	success: jest.fn()
+vi.mock('../../src/helpers/notificaciones.js', () => ({
+	warning: vi.fn(),
+	success: vi.fn()
 }));
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	storage: {
-		getUploadPromises: jest.fn(),
-		getDownloadPromises: jest.fn(),
-		ref: jest.fn(() => {
+		getUploadPromises: vi.fn(),
+		getDownloadPromises: vi.fn(),
+		ref: vi.fn(() => {
 			return {
-				child: jest.fn()
+				child: vi.fn()
 			};
 		})
 	},
 	db: {
-		collection: jest.fn(() => {
+		collection: vi.fn(() => {
 			return {
-				doc: jest.fn(() => {
+				doc: vi.fn(() => {
 					return {
-						set: jest.fn().mockResolvedValueOnce()
+						set: vi.fn().mockResolvedValueOnce()
 					};
 				})
 			};
@@ -125,7 +126,7 @@ describe('Función crear ticket', () => {
 		component = shallowMount(CreateTicket, {
 			stubs: ['router-link'],
 			mocks: {
-				$router: { replace: jest.fn() }
+				$router: { replace: vi.fn() }
 			}
 		});
 	});

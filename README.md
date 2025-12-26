@@ -1,23 +1,27 @@
-
 # Clean-Up Málaga
+
 Link: https://clean-up-malaga.netlify.app/
+
 ## Descripción del proyecto
+
 El proyecto trata sobre una plataforma en la que los ciudadanos residentes de un área podrán publicar desperfectos ubicados en la vía pública, con la intención de que los responsables, en este caso, el Ayuntamiento, los arregle.
 
 ## Integrantes del equipo
-* Rubén Jiménez Reina
 
-* Tom van Greevenbroek
+- Rubén Jiménez Reina
 
-* Sergio Morales Recio
+- Tom van Greevenbroek
 
-* Francisco José García Barbero
+- Sergio Morales Recio
 
-* Antonio Sixto López Malo
+- Francisco José García Barbero
 
-* Safa Hrimech
+- Antonio Sixto López Malo
 
-* José Luis Castro Díaz
+- Safa Hrimech
+
+- José Luis Castro Díaz
 
 ## Proceso del proyecto
->*02/04/2019* - Se ha subido la Versión 1 (V1) de la planificación del proyecto.
+
+> _02/04/2019_ - Se ha subido la Versión 1 (V1) de la planificación del proyecto

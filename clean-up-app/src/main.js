@@ -1,18 +1,14 @@
-import { createApp, configureCompat } from 'vue';
+import { createApp } from 'vue';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 import Oruga from '@oruga-ui/oruga-next';
+import '@oruga-ui/theme-bulma/style.css';
 import { bulmaConfig } from '@oruga-ui/theme-bulma';
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import store from '@/store/store';
 import './assets/scss/app.scss';
-
-// Configure Vue 3 compat mode
-configureCompat({
-	MODE: 2
-});
 
 let app = null;
 

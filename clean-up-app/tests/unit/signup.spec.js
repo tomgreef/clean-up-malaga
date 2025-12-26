@@ -1,30 +1,31 @@
+import { vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import SignupForm from '@/components/SignupForm.vue';
 import firebase from '@/firebase';
 import notificaciones from '@/helpers/notificaciones';
 import authErrors from '@/helpers/authErrors';
 
-jest.mock('../../src/helpers/authErrors.js', () =>
-	jest.fn(() => {
+vi.mock('../../src/helpers/authErrors.js', () =>
+	vi.fn(() => {
 		return 'authError';
 	})
 );
 
-jest.mock('../../src/helpers/notificaciones.js', () => ({
-	warning: jest.fn(),
-	success: jest.fn()
+vi.mock('../../src/helpers/notificaciones.js', () => ({
+	warning: vi.fn(),
+	success: vi.fn()
 }));
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: {
-		createUserWithEmailAndPassword: jest.fn()
+		createUserWithEmailAndPassword: vi.fn()
 	},
 	db: {
-		collection: jest.fn(() => {
+		collection: vi.fn(() => {
 			return {
-				doc: jest.fn(() => {
+				doc: vi.fn(() => {
 					return {
-						set: jest.fn()
+						set: vi.fn()
 					};
 				})
 			};
@@ -180,10 +181,10 @@ describe('Función de registro', () => {
 	});
 
 	it('Se crea el usuario', async () => {
-		const emailVerification = jest.fn().mockResolvedValueOnce();
+		const emailVerification = vi.fn().mockResolvedValueOnce();
 		firebase.auth.createUserWithEmailAndPassword.mockResolvedValueOnce({
 			user: {
-				updateProfile: jest.fn().mockResolvedValueOnce(),
+				updateProfile: vi.fn().mockResolvedValueOnce(),
 				sendEmailVerification: emailVerification
 			}
 		});

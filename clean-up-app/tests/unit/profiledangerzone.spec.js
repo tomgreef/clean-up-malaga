@@ -1,11 +1,12 @@
+import { vi } from 'vitest';
 import ProfileDangerZone from '@/components/ProfileDangerZone.vue';
 import firebase from '@/firebase';
 import { shallowMount } from '@vue/test-utils';
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: {
 		currentUser: {
-			delete: jest.fn().mockResolvedValueOnce()
+			delete: vi.fn().mockResolvedValueOnce()
 		}
 	}
 }));
@@ -14,15 +15,15 @@ describe('Función eliminar cuenta', () => {
 	let component;
 
 	const $router = {
-		replace: jest.fn()
+		replace: vi.fn()
 	};
 
 	const $buefy = {
 		dialog: {
-			confirm: jest.fn()
+			confirm: vi.fn()
 		},
 		toast: {
-			open: jest.fn()
+			open: vi.fn()
 		}
 	};
 

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 import LoginForm from '@/components/LoginForm.vue';
 import firebase from '@/firebase';
@@ -5,22 +6,22 @@ import getUserType from '@/helpers/sessionHelper';
 import notificaciones from '@/helpers/notificaciones';
 import authErrors from '@/helpers/authErrors';
 
-jest.mock('../../src/helpers/authErrors.js', () =>
-	jest.fn(() => {
+vi.mock('../../src/helpers/authErrors.js', () =>
+	vi.fn(() => {
 		return 'authError';
 	})
 );
 
-jest.mock('../../src/helpers/notificaciones.js', () => ({
-	warning: jest.fn()
+vi.mock('../../src/helpers/notificaciones.js', () => ({
+	warning: vi.fn()
 }));
 
-jest.mock('../../src/helpers/sessionHelper.js', () => jest.fn());
+vi.mock('../../src/helpers/sessionHelper.js', () => vi.fn());
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: {
-		signInWithEmailAndPassword: jest.fn(),
-		signOut: jest.fn()
+		signInWithEmailAndPassword: vi.fn(),
+		signOut: vi.fn()
 	}
 }));
 
@@ -97,10 +98,10 @@ describe('Estado del botón de inicio de sesión', () => {
 describe('Función de inicio', () => {
 	let component;
 	const $router = {
-			replace: jest.fn()
+			replace: vi.fn()
 		},
 		$store = {
-			commit: jest.fn()
+			commit: vi.fn()
 		};
 
 	beforeEach(() => {

@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
-import TicketsTable from '@/components/TicketsTable';
+import TicketsTable from '@/components/TicketsTable.vue';
 import firebase from '@/firebase';
 
-jest.mock('../../src/firebase.js', () => ({
+vi.mock('../../src/firebase.js', () => ({
 	auth: {
 		currentUser: {}
 	}
